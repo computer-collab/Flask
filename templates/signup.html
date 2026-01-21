@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign up Page</title>
+</head>
+<body>
+    <form id="SignUpForm">
+        <div id="unnamed" >
+            <h1>
+                sign up here
+            </h1>
+            <input  placeholder="Enter your email address" required id="EmailBox"  > <button id="GenerateOTP">Generate OTP</button>
+            <input  placeholder="Enter The otp" required type="text" pattern="[0-9]{6}" >
+            <button  id="SignUpSubmit">Submit</button>
+
+        </div>
+
+    </form><script>
+    alert("its working priya, @inbuilt js");
+    document.getElementById('GenerateOTP').addEventListener('click', x => {
+        x.preventDefault();
+        const email = document.getElementById('EmailBox').value;
+        const request_type = "generateotp";
+        const payload1 = {
+            email : email ,
+            request_type : request_type
+         }
+        fetch("/signup",{
+            method : "POST",
+            headers : {
+                "content-type" : "application/json"
+            }, body : JSON.stringify(payload1)
+        })
+        
+    }).then(res => res.json()).then()
+    
+    
+    document.getElementById('SignUpSubmit').addEventListener('click', x => {
+        x.preventDefault();
+        const otp = document.getElementById('EmailBox').value;
+
+    })
+    
+    
+    </script>
+</body>
+</html>    
