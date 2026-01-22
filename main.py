@@ -1,12 +1,14 @@
-from flask import Flask, jsonify, request, session, render_template
+from flask import Flask, jsonify, request, session, render_template, redirect
 from flask_sqlalchemy import SQLAlchemy
 from otp import GenerateOTP
+
+
 
 
 app=Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI']='sqlite:///data.db'
 db = SQLAlchemy(app)
-
+app.secret_key = "this is ultra long secret code"
 
 # =-------- DATABASES ------------------------
 
@@ -40,13 +42,34 @@ def signup():
 
     if request.method == "POST":
         payload = request.get_json()
-        if payload.request_type == "generateotp":
-            email = payload.get(email)
+        request_type = payload.get("request_type")
+        
+        #requesting the otp
+        if request_type == "generateotp":
+            email = payload.get("email")
             
-            otp = GenerateOTP(email)
-            if otp :
-                return jsonify(message="OTP Sent")
-            else return jsonify(message="not sent")
+            session['otp'] = GenerateOTP(email)
+            serverotp = session['otp']
+            if serverotp :
+                print("Response sent")
+                return jsonify(message="otpsent")
+            else : print("respose not sent");return jsonify(message="otpnotsent")
+
+
+            #submitting the otp
+        if request_type == "submitotp":
+            clientotp = payload.get("otp")
+            serverotp = session.get('otp')
+            if not serverotp:
+                print("error server otp variable not found")
+            if str(serverotp) == str(clientotp):
+                print("\nOTP Verification Successful")
+                session.pop('otp',None)
+                return jsonify(login="success", loginmessage="Login was succesfully verified by the server")
+            else :
+                print("OTP Verification failed")
+                return jsonify(login="failed")
+
 
 
 
