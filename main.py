@@ -1,5 +1,6 @@
 from flask import Flask, jsonify, request, session, render_template
 from flask_sqlalchemy import SQLAlchemy
+from otp import GenerateOTP
 
 
 app=Flask(__name__)
@@ -38,7 +39,14 @@ def signup():
         return render_template("signup.html")
 
     if request.method == "POST":
-        print(f"{request.method} :  Some data was posted")
+        payload = request.get_json()
+        if payload.request_type == "generateotp":
+            email = payload.get(email)
+            
+            otp = GenerateOTP(email)
+            if otp :
+                return jsonify(message="OTP Sent")
+            else return jsonify(message="not sent")
 
 
 
