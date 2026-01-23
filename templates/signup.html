@@ -20,8 +20,11 @@
         }
     </style>
 </head>
-
+ 
 <body>
+
+
+
     <form id="SignUpForm">
         <div id="unnamed">
             <h1>
@@ -29,8 +32,8 @@
             </h1>
             <input placeholder="Enter your email address" required id="EmailBox"> <button id="GenerateOTP">Generate
                 OTP</button>
-            <input placeholder="Enter The otp"  type="text" pattern="[0-9]{6}" id="OTPBox">
-            <button id="SignUpSubmit">Submit</button>
+            <input placeholder="Enter The otp"  type="text" pattern="[0-9]{6}" id="OTPBox" required >
+            <button id="SignUpSubmit" type = "button">Submit</button>
 
         </div>
         <div id="BackgroundDiv" hidden>
@@ -40,11 +43,14 @@
                 <small>The password must be of 8 ascii</small>
                 <label>Password Confirmation</label>
                 <input class="PasswordInput" type="password" pattern="{8}" required id="PasswordConfirmation">
-                <button id="PasswordSubmit">Submit Password</button>
+                <button id="PasswordSubmit" type="button">Submit Password</button>
             </div>
         </div>
 
     </form>
+
+
+
     <script>
         console.log("its working x priya, @inbuilt js");
         document.getElementById('GenerateOTP').addEventListener('click', x => {
@@ -95,9 +101,8 @@
                     if (redirector.login === "success") {
                         const Password = document.getElementById('BackgroundDiv');
                         Password.hidden = false;
-                        document.getElementById('SubmitPassword').addEventListener('click',
-                            SubmitPassword => {
-                                SubmitPassword.preventDefault();
+                        document.getElementById('SubmitPassword').addEventListener('click', x => {
+                            x.preventDefault();
                                 const NewPassword = document.getElementById('NewPassword').value;
                                 const PasswordConfirmation = document.getElementById('PasswordConfirmation').value
                                 
@@ -110,11 +115,10 @@
                                         }, body : JSON.stringify(PasswordSubmit)
                                     }).then(pass=>pass.json())
                                     .then( responsibility => {
-                                        responsibility.preventDefault();
                                         if (responsibility.password_status === "successful"){
                                             console.log(responsibility.message);
                                             alert("Sign up successful, please login")
-                                            window.location.href = "/login"
+                                            
                                         }
                                         else if (responsibility.password_status === "failed"){
                                             alert("Save failed\n",message)
@@ -123,7 +127,7 @@
 
 
                                 }
-                            }
+                                    else alert("error bro, passwords dont match")                            }
                         )
 
                     } else {

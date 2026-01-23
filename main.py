@@ -89,6 +89,7 @@ def signup():
 
 @app.route("/password",methods=["POST"])
 def passwordsubmit():
+    print("Password received")
     packet = request.get_json()
     request_type = request.get("request_type")
     if request_type == "Submit Password":
@@ -109,8 +110,13 @@ def passwordsubmit():
         return jsonify(password_status="failed", message="Password save failed")
 
 
-
-    
+#_____________login page____________
+@app.route("/login")
+def loging():
+    if request.method == "POST":
+        return render_template("login.html")
+    else :
+        return "<h1>hello world</h1>"
 
 
 
@@ -118,7 +124,7 @@ def passwordsubmit():
 @app.route('/home',methods=['POST','GET'])
 def homepage():
     if request.method == "GET":
-        if not session['user']:
+        if 'user' not  in session:
             return redirect('/login')
     
         if session['user']:
