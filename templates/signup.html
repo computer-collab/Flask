@@ -1,67 +1,141 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign up Page</title>
+    <style>
+        #BackgroundDiv {
+            max-width: 100vw;
+            max-height: 100vh;
+
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        #NewPasswordBox {
+            display: block;
+
+
+        }
+    </style>
 </head>
+
 <body>
     <form id="SignUpForm">
-        <div id="unnamed" >
+        <div id="unnamed">
             <h1>
                 sign up here
             </h1>
-            <input  placeholder="Enter your email address" required id="EmailBox"  > <button id="GenerateOTP">Generate OTP</button>
-            <input  placeholder="Enter The otp" required type="text" pattern="[0-9]{6}" id = "OTPBox" >
-            <button  id="SignUpSubmit">Submit</button>
+            <input placeholder="Enter your email address" required id="EmailBox"> <button id="GenerateOTP">Generate
+                OTP</button>
+            <input placeholder="Enter The otp"  type="text" pattern="[0-9]{6}" id="OTPBox">
+            <button id="SignUpSubmit">Submit</button>
 
         </div>
+        <div id="BackgroundDiv" hidden>
+            <div id="NewPasswordBox">
+                <label>Password input</label>
+                <input class="PasswordInput" type="password" minlength = "8" required id="NewPassword">
+                <small>The password must be of 8 ascii</small>
+                <label>Password Confirmation</label>
+                <input class="PasswordInput" type="password" pattern="{8}" required id="PasswordConfirmation">
+                <button id="PasswordSubmit">Submit Password</button>
+            </div>
+        </div>
 
-    </form><script>
-    console.log("its working x priya, @inbuilt js");
-    document.getElementById('GenerateOTP').addEventListener('click', x => {
-        x.preventDefault();
-        const email = document.getElementById('EmailBox').value;
-        const request_type = "generateotp";
-        const payload1 = {
-            email : email ,
-            request_type : request_type
-         }
-        fetch("/signup",{
-            method : "POST",
-            headers : {
-                "content-type" : "application/json"
-            }, body : JSON.stringify(payload1)
-        })
-        .then( res => res.json())
-        .then( response => {
-            if (response.message === "otpsent"){
-                console.log("OTP sent");
-                alert("OTP was sent. Check your Email inbox")
+    </form>
+    <script>
+        console.log("its working x priya, @inbuilt js");
+        document.getElementById('GenerateOTP').addEventListener('click', x => {
+            x.preventDefault();
+            const email = document.getElementById('EmailBox').value;
+            const request_type = "generateotp";
+            const payload1 = {
+                email: email,
+                request_type: request_type
             }
-        })
-        
-    })
-    
-    
-    document.getElementById('SignUpSubmit').addEventListener('click', x => {
-        x.preventDefault();
-        const otp = document.getElementById('OTPBox').value;
-        const request_type = "submitotp";
-        const otpload = {
-            otp : otp,
-            request_type : request_type
-        }
-        fetch('/signup', {
-            method : "POST",
-            headers : {
-                "content-type" : "application/json"
-            }, body : JSON.stringify(otpload)
+            fetch("/signup", {
+                method: "POST",
+                headers: {
+                    "content-type": "application/json"
+                }, body: JSON.stringify(payload1)
+            })
+                .then(res => res.json())
+                .then(response => {
+                    if (response.message === "otpsent") {
+                        console.log("OTP sent");
+                        alert("OTP was sent. Check your Email inbox")
+
+                    } else if (response.message === "error") {
+                        console.log("Server Error: Unknown error has occurred on servers side");
+                        alert("Error :  Cross verify the credentials")
+                    }
+                })
+
         })
 
-    })
-    
-    
+
+        document.getElementById('SignUpSubmit').addEventListener('click', x => {
+            x.preventDefault();
+            const otp = document.getElementById('OTPBox').value;
+            const request_type = "submitotp";
+            const otpload = {
+                otp: otp,
+                request_type: request_type
+            }
+            fetch('/signup', {
+                method: "POST",
+                headers: {
+                    "content-type": "application/json"
+                }, body: JSON.stringify(otpload)
+            })
+                .then(res => res.json())
+                .then(redirector => {
+                    if (redirector.login === "success") {
+                        const Password = document.getElementById('BackgroundDiv');
+                        Password.hidden = false;
+                        document.getElementById('SubmitPassword').addEventListener('click',
+                            SubmitPassword => {
+                                SubmitPassword.preventDefault();
+                                const NewPassword = document.getElementById('NewPassword').value;
+                                const PasswordConfirmation = document.getElementById('PasswordConfirmation').value
+                                
+                                if (NewPassword === PasswordConfirmation) {
+                                    const PasswordSubmit = {password : NewPassword } 
+                                    fetch("/password",{
+                                        method : "POST",
+                                        headers : {
+                                            "content-type" : "application/json"
+                                        }, body : JSON.stringify(PasswordSubmit)
+                                    }).then(pass=>pass.json())
+                                    .then( responsibility => {
+                                        responsibility.preventDefault();
+                                        if (responsibility.password_status === "successful"){
+                                            console.log(responsibility.message);
+                                            alert("Sign up successful, please login")
+                                            window.location.href = "/login"
+                                        }
+                                        else if (responsibility.password_status === "failed"){
+                                            alert("Save failed\n",message)
+                                        }
+                                    })
+
+
+                                }
+                            }
+                        )
+
+                    } else {
+                        alert("Wrong OTP/MAIL")
+                    }
+
+                })
+
+        })
+
+
     </script>
 </body>
-</html>    
+
+</html>

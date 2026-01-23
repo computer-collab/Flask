@@ -13,10 +13,15 @@ def GenerateOTP(email):
     From : Mail Bot Service, login.
     """
     text = f"Subject : {subject}\n\n{message}"
-    server = smtplib.SMTP("smtp.gmail.com",587)
-    server.starttls()
-    server.login(sender_email,app_password)
-    server.sendmail(sender_email,receiver_email,text )
-    server.quit()
-    print("\nEmail has been successfully sent.")
-    return otp
+    try :
+        server = smtplib.SMTP("smtp.gmail.com",587)
+        server.starttls()
+        server.login(sender_email,app_password)
+        server.sendmail(sender_email,receiver_email,text )
+        server.quit()
+        print("Email has been successfully sent.\n")
+        return otp
+    
+    except Exception as e :
+        print(f"\n\033[31mError:\033[0m {e}\n")
+        return "Error_exception"

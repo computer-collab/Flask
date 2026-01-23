@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, request, session, render_template, redirect
 from flask_sqlalchemy import SQLAlchemy
 from otp import GenerateOTP
+from signup import *
 
 
 
@@ -15,8 +16,7 @@ app.secret_key = "this is ultra long secret code"
 #__________USERS SIGNUP _______________________
 
 class SignedUsers(db.Model):
-    Email = db.Column(db.String(1000),nullable = False)
-    PhoneNo = db.Column(db.String(10),primary_key=True, nullable=False)
+    Email = db.Column(db.String(1000),nullable = False, primary_key=True)
     Password = db.Column(db.String(1000), primary_key=False, nullable=False)
 
 
@@ -27,6 +27,21 @@ with app.app_context():
 
 
 #----------- ROUTES --------------
+
+
+# ___________404 not found ____________
+@app.errorhandler(404)
+def errorhanler(x):
+    print("404 Not Found: The uknown URL was requested.\n")
+    return render_template("404.html"),404
+
+#__________POSTS ______
+@app.before_request
+def beforerequest():
+    if request.method == "POST":
+        print("Post request recieved...")
+
+# _________ROOT________
 @app.route('/')
 def welcome():
     print("\nWelcome page was requested.")
@@ -47,13 +62,15 @@ def signup():
         #requesting the otp
         if request_type == "generateotp":
             email = payload.get("email")
-            
+            session['user'] = email
             session['otp'] = GenerateOTP(email)
             serverotp = session['otp']
             if serverotp :
                 print("Response sent")
                 return jsonify(message="otpsent")
-            else : print("respose not sent");return jsonify(message="otpnotsent")
+            elif str(serverotp) =="Error_exception":
+                print (f"\033[31m Error\033[0m : Unknown error has occurred...")
+                return jsonify(message = "error")
 
 
             #submitting the otp
@@ -61,7 +78,7 @@ def signup():
             clientotp = payload.get("otp")
             serverotp = session.get('otp')
             if not serverotp:
-                print("error server otp variable not found")
+                print("\033[31mError \033[0m: Variable holding the otp was not found")
             if str(serverotp) == str(clientotp):
                 print("\nOTP Verification Successful")
                 session.pop('otp',None)
@@ -70,8 +87,56 @@ def signup():
                 print("OTP Verification failed")
                 return jsonify(login="failed")
 
+@app.route("/password",methods=["POST"])
+def passwordsubmit():
+    packet = request.get_json()
+    request_type = request.get("request_type")
+    if request_type == "Submit Password":
+        RawPassword = packet.get("password")
+        session['password']= HashGen(RawPassword)
+    
+        SignedUser =  SignedUsers(
+            Email = session.get('user'),
+            Password =  session.get('password')
+    )
+    try :
+        db.session.add(SignedUser)
+        db.session.commit()
+        return jsonify(password_status = "successful", message="Password Save successful")
+
+    except Exception as error:
+        print(f"Error has occurred\n{error}")
+        return jsonify(password_status="failed", message="Password save failed")
 
 
+
+    
+
+
+
+#__________ HOME ______________
+@app.route('/home',methods=['POST','GET'])
+def homepage():
+    if request.method == "GET":
+        if not session['user']:
+            return redirect('/login')
+    
+        if session['user']:
+            return render_template("home.html")
+
+
+# ____________BIN _____________________
+@app.route('/bin')
+def bin():
+    return """
+<div class="input-group">
+  <input type="text" id="username" placeholder="Username" />
+  <label for="username">Username</label>
+</div>
+
+                           
+                           
+                           """
 
 # ---------------------Running the app if it is run as the main ---------------
 
