@@ -39,3 +39,58 @@ Server Creates databases to store all of these.
 Create an admin port at 1980 as the same credentials but using the website designs and mark it to Admin page.
 Create a Teacher port at 2525 as with the same credentials used for a teacher.
 By using the internet sersvice, post a notification to the android user if the attendance is not captured as "Attendance not detected" at the end of the period.
+Server always tracks the uptime of each student.
+
+{
+    Create the seperate ports for internet and local area network
+}
+
+Teacher:
+Teacher has two ways to login. 
+1. The main app: The email id of the college, (let out the template set by the admin in admin page for email.) uses the mobile number as the primary recognition of the device with sim status verification not with any of messaging service. Allow the teacher to login if mobile number is ok.
+    the app takes input as password, email address and otp generator.
+    """ To generate otp via email. use this:
+    import random, smtplib
+
+def GenerateOTP(email):
+    receiver_email = email
+    otp = random.randint(100000,999999)
+    sender_email = "otpmail.noreply@gmail.com"
+    app_password = "dxrrnmilxweeznoz"
+    subject = "Your OTP for registration"
+    message = f"""
+    Hey,
+    This is your otp : {otp} for registration.
+    Thankyou for registering.
+    From : Mail Bot Service, login.
+    """
+    text = f"Subject : {subject}\n\n{message}"
+    try :
+        server = smtplib.SMTP("smtp.gmail.com",587)
+        server.starttls()
+        server.login(sender_email,app_password)
+        server.sendmail(sender_email,receiver_email,text )
+        server.quit()
+        print("Email has been successfully sent.\n")
+        return otp
+    
+    except Exception as e :
+        print(f"\n\033[31mError:\033[0m {e}\n")
+        return "Error_exception"
+
+        """
+2. Web login method. by connection with the local host server,(in the network reach of server via, WAN/LAN), use GenerateOTP(); password, email. 
+...........
+Teacher can access the students data record accordingly to their signup for each of their respective subjects.
+
+Class Representative Login:
+    this is as same as the student but with special access, set , update the timetabe, current / upcoming subjects, modify the weekly/daily timetable of the class.
+
+Class Incharge Login:
+    this is as same as teacher login but with extended privilages to all student add to teacher add, teacher subject, registration, update, CRUD modifications for timetable.. etc at super previlages but at limited than admin.
+    The incharge should approve each login/signup. ( These are through out the internet.)
+    CAN VIEW WHOLE CLASS'S ATTENDANCE STATUS, FROM TEACHER TO STUDENT.
+
+Student login:
+     as simple as a normal login. When approved, the app collects the data of LAN configured web socket online status.
+     Can view their own attendamce tracks

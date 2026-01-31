@@ -1,13 +1,15 @@
 import random, smtplib
 
-def GenerateOTP(email):
+def GenerateOTP(email,Name):
+    if not Name:
+        Name = "Name not defined\n"
     receiver_email = email
     otp = random.randint(100000,999999)
     sender_email = "otpmail.noreply@gmail.com"
     app_password = "dxrrnmilxweeznoz"
     subject = "Your OTP for registration"
     message = f"""
-    Hey,
+    Hey Ms./Mr.{Name},
     This is your otp : {otp} for registration.
     Thankyou for registering.
     From : Mail Bot Service, login.

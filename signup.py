@@ -1,5 +1,5 @@
 from  werkzeug.security import *
-from otp import GenerateOTP
+from modules.otp import GenerateOTP
 def HashGen(Password):
     return generate_password_hash(Password)
 

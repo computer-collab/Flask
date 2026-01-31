@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login.Admin</title>
+
+</head>
+<body>
+    <form id="AdminLoginForm">
+        <input id="username" type = "text" required placeholder = "Username">
+        <input id="password" type = "text" required placeholder = "Password">
+        <button type = 'button' id = "AdminButton" onclick="login()">Login</button>
+        
+    </form>
+    <script>
+        function login(){
+
+        const button = document.getElementById('AdminButton');
+        const PasswordBox = document.getElementById('password');
+        const UsernameBox = document.getElementById('username');
+            button.addEventListener('click', e => {
+                e.preventDefault();
+                const username = UsernameBox.value ;
+                const password = PasswordBox.value ;
+                const loginJSON ={
+                    username : username,
+                    password : password
+                }
+                fetch('/login',{
+                    method : 'POST',
+                    headers : {
+                        'content-type'  : 'application/json'
+
+                    }, body : JSON.stringify(loginJSON)
+                }) .then  (res => res.json()).then(
+                    login => {
+                        if (login.login === "success"){
+                            window.location.href = "/admin"
+                        } else{
+                            window.alert(login.message)
+                        }
+
+                    }
+                )
+            })
+        }
+    </script>
+</body>
+</html>
