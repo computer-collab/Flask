@@ -7,7 +7,7 @@ from signup import *
 
 
 app=Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI']='sqlite:///data.db'
+app.config['SQLALCHEMY_DATABASE_URI']='sqlite:///users/data.db'
 db = SQLAlchemy(app)
 app.secret_key = "this is ultra long secret code"
 

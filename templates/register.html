@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+</head>
+<body>
+<form  >
+  <input id = "email_box" type = "email" maxlength="150">
+  <input id = "otp_box" type="number" maxlength="6" minlength="6">
+  <button id="GenOTP" type = "button">Generate OTP</button>
+  <input id='admin_user' type='text' maxlength='15'
+  placeholder = 'username'
+  required>
+  <input id='admin_password' type='text' maxlength='15' 
+  placeholder="password"
+  required>
+  <input id='admin_token' type='text' maxlength='15' placeholder="token"  required>
+  <button type='button' id = "rahul">Submit</button>
+</form>
+<script>
+
+  document.getElementById('rahul').addEventListener('click',e=>{
+    e.preventDefault();
+    const username = document.getElementById("admin_user").value;
+    const password = document.getElementById("admin_password").value;
+    const token = document.getElementById("admin_token").value;
+    let request_type = "admin_register";
+    const register_pack = {
+      username : username, 
+      password :  password,
+      token : token,
+      email : email,
+      otp : otp,
+      request_type : request_type
+    }
+    fetch('/register',{
+      method : "POST",
+      headers : {
+        "content-type" : "application/json"
+      }, body : JSON.stringify(register_pack)
+    }).then(res => res.json()).then(e=>{
+      if (e.status='ok'){
+        alert("DataBase set successfully. Please login to continue.")
+        window.location.href= '/'
+      }
+    })
+  })
+</script>
+
+</body>
+</html>
