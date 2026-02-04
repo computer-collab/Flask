@@ -2,7 +2,7 @@ from flask import Flask, jsonify, request, session, render_template, redirect
 from flask_sqlalchemy import SQLAlchemy
 from modules.otp import GenerateOTP
 from signup import *
-
+import admin
 
 
 
@@ -45,7 +45,7 @@ def beforerequest():
 @app.route('/')
 def welcome():
     print("\nWelcome page was requested.")
-    return render_template("welcome.html")
+    return render_template("user/welcome.html")
 
 
 #____________ SIGN UP _________________

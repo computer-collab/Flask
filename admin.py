@@ -1,7 +1,7 @@
 from flask import Flask, session, redirect, render_template,request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash
-from modules.otp import GenerateOTP
+from modules.mails import GenerateOTP
 import json
 from modules.time import CheckCooldown, SetCooldown
 from datetime import *
@@ -27,8 +27,16 @@ admin.secret_key="he is an admin"
 
 # ################ DATABASES ################
 
+class register(db.Model):
+  __bind_key__ = "divya"
+  username = db.Column(db.String(100),primary_key=True)
+  password = db.Column(db.String(100),nullable=False)
+  token = db.Column(db.String(100))
 
-
+#____________________error handler_____________________________________
+@admin.errorhandler(404)
+def error(x):
+   return render_template('404.html')
 #___________________________ Admin page _________________________________________
 @admin.route('/admin')
 def adminpage():
@@ -36,21 +44,16 @@ def adminpage():
        return not_logged_in()
 
     if session.get('admin'):
-        return render_template('Admin.html')
+        return render_template('admin/Admin.html')
     
 
-class register(db.Model):
-  __bind_key__ = "divya"
-  username = db.Column(db.String(100),primary_key=True)
-  password = db.Column(db.String(100),nullable=False)
-  token = db.Column(db.String(100))
 
 #____________________________ADMIN REGISTRY________________________
 
 @admin.route('/register', methods = ['GET','POST'])
 def AdminRegister():
   if request.method=='GET':
-    return render_template('register.html')
+    return render_template('admin/register.html')
     
   elif request.method == 'POST':
      register_pack = request.get_json()
@@ -64,15 +67,26 @@ def AdminRegister():
 
      # Requesting otp.
      if admin_request_type == "GenerateOtp":
+        session['name'] = admin_name
         session['email'] = admin_email
-        session['otp'] = GenerateOTP(admin_email)
-        session['now'] = datetime.now()
-        otp =  GenerateOTP(session.get['email'])
-        session['cooldown'] = SetCooldown(session.get('now')) #setting the cooldown
-        return jsonify(status="ok", message="Email has been sent.")
+        session['userotp'] = admin_otp
+        cooldown_time = session.get('cooldown')
 
-     if CheckCooldown(session.get('cooldown')):
-         pass 
+        if cooldown_time is None:
+          session['serverotp'] =  GenerateOTP(session.get('email'))
+          print(session.get('now'))
+          now_time = session.get('now') 
+          session['cooldown']= SetCooldown() #setting the cooldown
+          return jsonify(status="ok", message="Email has been sent.")
+
+        elif CheckCooldown(session.get('cooldown')):
+            session['serverotp'] = GenerateOTP(session.get('email'))
+            session['now'] = datetime.now()
+            return jsonify(status="ok", message="Email has been sent.")
+        elif not CheckCooldown(session.get('cooldown')):
+           return jsonify(status="failed",message="The timer is under cooldown. please try again after sometime (Min cooldown : 30s)")
+            
+      
            
            
 
@@ -85,5 +99,5 @@ def adminhome():
     return redirect('/admin')
 #_____________________ ADMIN RUNNNNING ______________________
 if __name__ == "__main__":
-    print("\033[41mWarning: Please make sure that yo u have deleted the admin model\033[0m")
+    #print("\033[41mWarning: Please make sure that yo u have deleted the admin model\033[0m")
     admin.run(port=2222,debug=True,host='0.0.0.0')

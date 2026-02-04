@@ -12,14 +12,14 @@ def CheckCooldown(future_time):
 # Example usage
 if __name__ == "__main__":
     # Start cooldown
-    cooldown_end = start_cooldown()
+    cooldown_end = SetCooldown()
     print("Cooldown ends at:", cooldown_end.strftime("%H:%M:%S"))
 
     # Simulate checking
     import time
     for i in range(35):  # Check every second for 35 seconds
         time.sleep(1)
-        if check_cooldown(cooldown_end):
+        if CheckCooldown(cooldown_end):
             print(f"[{i+1}s] Cooldown complete!")
             break
         else:

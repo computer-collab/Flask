@@ -27,7 +27,7 @@
 
 </form>
 <script>
-    const submitbtn = document.getElementById('rahul');
+    const submitbtn = document.getElementById('SubmitRegister');
     const genotpbtn = document.getElementById('GenOTP')
 
     genotpbtn.addEventListener('click',generate=>{
@@ -41,6 +41,16 @@
         email : email,
         request_type : request_type
       }
+      fetch('/register',{
+        method : "POST",
+        headers : {
+          "Content-Type" : "application/json"
+        }, body : JSON.stringify(register_pack)
+      }).then(res=> res.json()).then (server => {
+        if (server.status === "ok"){
+          alert(server.message)
+        } else alert ("failed")
+      })
     })
 
 
