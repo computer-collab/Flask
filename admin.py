@@ -5,8 +5,7 @@ from modules.mails import GenerateOTP
 import json
 from modules.time import CheckCooldown, SetCooldown
 from datetime import *
-
-
+from concurrent.futures import ThreadPoolExecutor
 
 
 
@@ -22,6 +21,7 @@ admin.config['SQLALCHEMY_BINDS'] = { 'dbadmin' :"sqlite:///admin/admin.db" }
 db = SQLAlchemy(admin)
 admin.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 admin.secret_key="he is an admin"
+executor = ThreadPoolExecutor(max_workers=20)
 
 
 
@@ -73,14 +73,15 @@ def AdminRegister():
         cooldown_time = session.get('cooldown')
 
         if cooldown_time is None:
-          session['serverotp'] =  GenerateOTP(session.get('email'))
+          session['serverotp'] =  GenerateOTP.start(session.get('email'))
           print(session.get('now'))
           now_time = session.get('now') 
           session['cooldown']= SetCooldown() #setting the cooldown
           return jsonify(status="ok", message="Email has been sent.")
 
         elif CheckCooldown(session.get('cooldown')):
-            session['serverotp'] = GenerateOTP(session.get('email'))
+            tempEmail = session.get('email')
+            session[f"{tempEmail}otp"] = GenerateOTP(session.get('email'))
             session['now'] = datetime.now()
             return jsonify(status="ok", message="Email has been sent.")
         elif not CheckCooldown(session.get('cooldown')):
@@ -91,13 +92,22 @@ def AdminRegister():
            
 
 
-        
-
+        ######################################################
+        #                   REDIRECTS                        #
+        ######################################################
  # _________________________HOME REDIRECT_______________________________          
 @admin.route('/home')
 def adminhome():
     return redirect('/admin')
+
+@admin.route('/signup')
+def signup():
+   return redirect("/register")
+
+def not_logged_in():
+   return render_template('notloggedin.html')
 #_____________________ ADMIN RUNNNNING ______________________
 if __name__ == "__main__":
     #print("\033[41mWarning: Please make sure that yo u have deleted the admin model\033[0m")
-    admin.run(port=2222,debug=True,host='0.0.0.0')
+    # admin.run(port=2222,debug=True,host='0.0.0.0')
+    pass
