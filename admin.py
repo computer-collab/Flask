@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from modules import HashGen
 from modules import GenerateOTP
 import json,os
-from modules import CheckCooldown, SetCooldown, 
+from modules import CheckCooldown, SetCooldown , HashGen
 from datetime import *
 from concurrent.futures import ThreadPoolExecutor
 
@@ -32,11 +32,12 @@ admin.secret_key=os.urandom(24)
 
 class register(db.Model):
   __bind_key__ = "dbadmin"
-  username = db.Column(db.String(100),primary_key=True)
-  password = db.Column(db.String(100),nullable=False)
-  email = db.Column(db.String(100),nullable=False)
-  token = db.Column(db.String(100))
-#   api = db.Column(db.String(100),nullable=False)
+  name = db.Column(db.String(256),nullable = False)
+  username = db.Column(db.String(256),primary_key=True)
+  password = db.Column(db.String(1000),nullable=False)
+  email = db.Column(db.String(256),nullable=False)
+  token = db.Column(db.String(256))
+
 
 
 with admin.app_context():
@@ -71,13 +72,15 @@ def AdminRegister():
       
    elif request.method == 'POST':
       register_pack = request.get_json()
-      admin_name = register_pack.get('name')
-      admin_username = register_pack.get('username')
-      admin_email = register_pack.get('email')
+      admin_name = register_pack.get('name',"").capitalize()
+      admin_username = register_pack.get('username',"").lower()
+      admin_email = register_pack.get('email',"").lower()
       admin_password = register_pack.get('password')
       admin_token = register_pack.get('token')
       admin_otp = register_pack.get('otp')
       admin_request_type = register_pack.get('request_type')
+      admin_pack = [admin_name,admin_password, admin_email,  admin_token,admin_username]
+      
 
       # Requesting otp.
       if admin_name and admin_email:
@@ -116,7 +119,7 @@ def AdminRegister():
             print(admin_request_type)
             session["userotp"] = admin_otp
             session["username"] = admin_username
-            session["password"] =  admin_password
+            session["password"] =  HashGen(admin_password)
             session["token"] = admin_token
             if str(session.get('serverotp')) ==str (session.get("userotp")):
                session.pop("serverotp")
@@ -129,21 +132,23 @@ def AdminRegister():
                
                elif str(exists) != str(username):
                   dbusername = session.get("username")
-                  dbpassword = HashGen(session.get("password"))
+                  dbpassword = session.get("password")
                   dbtoken = session.get("token")
                   dbemail = session.get("email")
+                  dbname = session.get("name")
                   NewUser = register(
-                     username = dbusername, password = dbpassword , email = dbemail , token=dbtoken
+                     username = dbusername, password = dbpassword , email = dbemail , token=dbtoken, name = dbname
                   )
                   try :
                      db.session.add(NewUser)
                      db.session.commit()
                      print("DB Session Success")
                      return jsonify(status="dbsuccess")
+                     # return redirect('/register/success')
                   except Exception as e:
                      print("Error: Db session failed")
                      print(e)
-                     return jsonify(message="Db failed")
+                     return jsonify(message="An error occurred while setting the database. Please Try again.")
                else:
                   return jsonify(message="")
             else :
@@ -179,6 +184,12 @@ def not_logged_in():
 
 
 #### 
+
+#--------------------XXXXXXXXXXXXXXXXXXX-------------------
+
+@admin.route("/register/success")
+def successs():
+   return render_template("success.html")
 #______________PINGING THE SERVER__________
 
 @admin.route("/ping",methods=['POST',"GET"])
@@ -189,6 +200,3 @@ if __name__ == "__main__":
     print("\033[41mWarning: Please make sure that yo u have deleted the admin model\033[0m")
     admin.run(port=2222,debug=True,host='0.0.0.0')
     pass
-
-def main():
-   admin.run(port=2222,debug=True,host='0.0.0.0')

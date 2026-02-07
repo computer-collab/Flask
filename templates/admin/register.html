@@ -98,7 +98,7 @@ submitbtn.addEventListener("click", e=>{
       }).then(res=> res.json()).then (server => {
         
         if (server.status === "dbsuccess"){
-          window.location.href = "/login"
+          window.location.href = "/register/success"
         }
         else {
           alert(server.message);
