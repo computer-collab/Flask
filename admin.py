@@ -11,6 +11,9 @@ from concurrent.futures import ThreadPoolExecutor
 
 
 
+POST = "POST"
+DELETE = "DELETE"
+GET = "GET"
 
 
 
@@ -28,15 +31,20 @@ executor = ThreadPoolExecutor(max_workers=20)
 # ################ DATABASES ################
 
 class register(db.Model):
-  __bind_key__ = "divya"
+  __bind_key__ = "dbadmin"
   username = db.Column(db.String(100),primary_key=True)
   password = db.Column(db.String(100),nullable=False)
   token = db.Column(db.String(100))
+  api = db.Column(db.String(100),nullable=False)
 
 #____________________error handler_____________________________________
 @admin.errorhandler(404)
 def error(x):
    return render_template('404.html')
+
+@admin.route('/')
+def rootpage():
+   return render_template("admin/root.html")
 #___________________________ Admin page _________________________________________
 @admin.route('/admin')
 def adminpage():
@@ -52,44 +60,73 @@ def adminpage():
 
 @admin.route('/register', methods = ['GET','POST'])
 def AdminRegister():
-  if request.method=='GET':
-    return render_template('admin/register.html')
-    
-  elif request.method == 'POST':
-     register_pack = request.get_json()
-     admin_name = register_pack.get('name')
-     admin_username = register_pack.get('username')
-     admin_email = register_pack.get('email')
-     admin_password = register_pack.get('password')
-     admin_token = register_pack.get('token')
-     admin_otp = register_pack.get('otp')
-     admin_request_type = register_pack.get('request_type')
-
-     # Requesting otp.
-     if admin_request_type == "GenerateOtp":
-        session['name'] = admin_name
-        session['email'] = admin_email
-        session['userotp'] = admin_otp
-        cooldown_time = session.get('cooldown')
-
-        if cooldown_time is None:
-          session['serverotp'] =  GenerateOTP.start(session.get('email'))
-          print(session.get('now'))
-          now_time = session.get('now') 
-          session['cooldown']= SetCooldown() #setting the cooldown
-          return jsonify(status="ok", message="Email has been sent.")
-
-        elif CheckCooldown(session.get('cooldown')):
-            tempEmail = session.get('email')
-            session[f"{tempEmail}otp"] = GenerateOTP(session.get('email'))
-            session['now'] = datetime.now()
-            return jsonify(status="ok", message="Email has been sent.")
-        elif not CheckCooldown(session.get('cooldown')):
-           return jsonify(status="failed",message="The timer is under cooldown. please try again after sometime (Min cooldown : 30s)")
-            
+   if request.method=='GET':
+      return render_template('admin/register.html')
       
-           
-           
+   elif request.method == 'POST':
+      register_pack = request.get_json()
+      admin_name = register_pack.get('name')
+      admin_username = register_pack.get('username')
+      admin_email = register_pack.get('email')
+      admin_password = register_pack.get('password')
+      admin_token = register_pack.get('token')
+      admin_otp = register_pack.get('otp')
+      admin_request_type = register_pack.get('request_type')
+
+      # Requesting otp.
+      if admin_name and admin_email:
+         if admin_request_type == "GenerateOtp":
+            session['name'] = admin_name
+            if not admin_name:
+               print("error name hasnt recieved yet")
+            
+            else :
+               print(session.get("name"))
+            session['email'] = admin_email
+            session['userotp'] = admin_otp
+            cooldown_time = session.get('cooldown')
+
+            if cooldown_time is None:
+               session['serverotp'] =  GenerateOTP(session.get('email'))
+               print(session.get('now'))
+               now_time = session.get('now') 
+               session['cooldown']= SetCooldown() #setting the cooldown
+               print("cooldown has been set")
+               print(session.get('cooldown'))
+               return jsonify(status="ok", message="Email has been sent.")
+
+            elif CheckCooldown(session.get('cooldown')):
+               tempEmail = session.get('email')
+               session[f"{tempEmail}otp"] = GenerateOTP(session.get('email'))
+               session['now'] = datetime.now()
+               return jsonify(status="ok", message="Email has been sent.")
+            elif not CheckCooldown(session.get('cooldown')):
+               return jsonify(status="failed",message="The timer is under cooldown. please try again after sometime (Min cooldown : 30s)")
+               
+      
+      elif admin_username and admin_password and admin_token:
+         if admin_request_type == "SubmitDetails":
+            session["userotp"] = admin_otp
+            session["username"] = admin_username
+            session["password"] =  admin_password
+            if session.get('serverotp') == session.get("userotp"):
+               username = session.get("username")
+               exists = register.query.filter_by(username).first()
+               if exists == username:
+                  return jsonify(message="choose another username")
+
+            else :
+               return jsonify("Invalid Credentials...!!!")
+      
+      
+      
+
+      else :
+         return jsonify(message="Empty Credentials..!!!")
+         
+            
+         
+         
 
 
         ######################################################
@@ -108,6 +145,6 @@ def not_logged_in():
    return render_template('notloggedin.html')
 #_____________________ ADMIN RUNNNNING ______________________
 if __name__ == "__main__":
-    #print("\033[41mWarning: Please make sure that yo u have deleted the admin model\033[0m")
-    # admin.run(port=2222,debug=True,host='0.0.0.0')
+    print("\033[41mWarning: Please make sure that yo u have deleted the admin model\033[0m")
+    admin.run(port=2222,debug=True,host='0.0.0.0')
     pass
