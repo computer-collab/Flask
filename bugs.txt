@@ -1,0 +1,1 @@
+1.  flask-master/admin.py : bug detected: if cooldown is none is not working always goes through the elif statement.

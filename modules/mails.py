@@ -1,7 +1,8 @@
 import random, smtplib
+from flask import flash
 
-
-def GenerateOTP(email,Name=None):
+print("mails service approached")
+def GenerateOTP(email,Name):
     if not Name:
         Name = "**Name not defined**\n"
     receiver_email = email
@@ -16,6 +17,7 @@ def GenerateOTP(email,Name=None):
     From : Mail Bot Service, login.
     """
     text = f"Subject : {subject}\n\n{message}"
+    print("Please wait... sending email")
     try :
         server = smtplib.SMTP("smtp.gmail.com",587)
         server.starttls()
@@ -31,3 +33,4 @@ def GenerateOTP(email,Name=None):
     
 
 
+print("mails service approach ended")

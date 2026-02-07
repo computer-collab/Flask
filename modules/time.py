@@ -1,25 +1,32 @@
 from datetime import datetime, timedelta
 import time
 
+from datetime import datetime, timedelta
 
 def SetCooldown():
-    cooldown_until = time.time() + 30  # 30 seconds from now
+    cooldown_until = datetime.now() + timedelta(seconds=30)
     print("Cooldown set until:", cooldown_until)
-    return cooldown_until
-
+    return cooldown_until.isoformat()
 
 def CheckCooldown(future_time):
-    if not isinstance(future_time, (int, float)):
-        raise TypeError("future_time must be a timestamp (int or float)")
-
-    return time.time() >= future_time
-
+    cooldown = datetime.fromisoformat(future_time)
+    if not isinstance(cooldown, datetime):
+        return False
+    return datetime.now() > cooldown
 
 # Example usage
 if __name__ == "__main__":
     echo = SetCooldown()
 
-    if CheckCooldown(echo):
+    if CheckCooldown(echo) == "true":
         print("Cooldown expired")
     else:
         print("Still in cooldown")
+    time.sleep(31);
+
+    if CheckCooldown(echo) == "true":
+        print("Cooldown expired")
+    else:
+        print("Still in cooldown")
+
+

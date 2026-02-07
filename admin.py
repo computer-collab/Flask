@@ -1,9 +1,9 @@
-from flask import Flask, session, redirect, render_template,request, jsonify
+from flask import Flask, session, redirect, render_template,request, jsonify,flash
 from flask_sqlalchemy import SQLAlchemy
-from werkzeug.security import generate_password_hash
-from modules.mails import GenerateOTP
-import json
-from modules.time import CheckCooldown, SetCooldown
+from modules import HashGen
+from modules import GenerateOTP
+import json,os
+from modules import CheckCooldown, SetCooldown, 
 from datetime import *
 from concurrent.futures import ThreadPoolExecutor
 
@@ -23,8 +23,8 @@ admin.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///admin/employees.db"
 admin.config['SQLALCHEMY_BINDS'] = { 'dbadmin' :"sqlite:///admin/admin.db" }
 db = SQLAlchemy(admin)
 admin.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-admin.secret_key="he is an admin"
-executor = ThreadPoolExecutor(max_workers=20)
+admin.secret_key=os.urandom(24)
+
 
 
 
@@ -34,9 +34,14 @@ class register(db.Model):
   __bind_key__ = "dbadmin"
   username = db.Column(db.String(100),primary_key=True)
   password = db.Column(db.String(100),nullable=False)
+  email = db.Column(db.String(100),nullable=False)
   token = db.Column(db.String(100))
-  api = db.Column(db.String(100),nullable=False)
+#   api = db.Column(db.String(100),nullable=False)
 
+
+with admin.app_context():
+   db.create_all()
+   # db.create_all(bind='dbadmin')
 #____________________error handler_____________________________________
 @admin.errorhandler(404)
 def error(x):
@@ -60,6 +65,7 @@ def adminpage():
 
 @admin.route('/register', methods = ['GET','POST'])
 def AdminRegister():
+   
    if request.method=='GET':
       return render_template('admin/register.html')
       
@@ -77,54 +83,81 @@ def AdminRegister():
       if admin_name and admin_email:
          if admin_request_type == "GenerateOtp":
             session['name'] = admin_name
-            if not admin_name:
-               print("error name hasnt recieved yet")
-            
-            else :
-               print(session.get("name"))
-            session['email'] = admin_email
-            session['userotp'] = admin_otp
-            cooldown_time = session.get('cooldown')
 
+            session['email'] = admin_email
+            cooldown_time = session.get('cooldown')
             if cooldown_time is None:
-               session['serverotp'] =  GenerateOTP(session.get('email'))
+               
+               if not session.get("name"):
+                  return jsonify(message="didnt get the name here")
+               reciever_email = session.get("email")
+               name =  session.get("name")
+               serverotp =  GenerateOTP(reciever_email,name)
+               session['serverotp'] = serverotp
                print(session.get('now'))
-               now_time = session.get('now') 
-               session['cooldown']= SetCooldown() #setting the cooldown
+               
+               session['cooldown']= SetCooldown() 
                print("cooldown has been set")
-               print(session.get('cooldown'))
                return jsonify(status="ok", message="Email has been sent.")
 
             elif CheckCooldown(session.get('cooldown')):
-               tempEmail = session.get('email')
-               session[f"{tempEmail}otp"] = GenerateOTP(session.get('email'))
-               session['now'] = datetime.now()
-               return jsonify(status="ok", message="Email has been sent.")
+               session['cooldown']= SetCooldown()
+               session[f"serverotp"] = GenerateOTP(session.get('email'),session.get("name"))
+               
+               return jsonify(status="ok", message="Email has been resent.")
             elif not CheckCooldown(session.get('cooldown')):
                return jsonify(status="failed",message="The timer is under cooldown. please try again after sometime (Min cooldown : 30s)")
-               
+            else :
+               print("Sending mail failed")
+               return jsonify(message="failed")   
       
       elif admin_username and admin_password and admin_token:
          if admin_request_type == "SubmitDetails":
+            print(admin_request_type)
             session["userotp"] = admin_otp
             session["username"] = admin_username
             session["password"] =  admin_password
-            if session.get('serverotp') == session.get("userotp"):
+            session["token"] = admin_token
+            if str(session.get('serverotp')) ==str (session.get("userotp")):
+               session.pop("serverotp")
+               
+               session["verified"] = True
                username = session.get("username")
-               exists = register.query.filter_by(username).first()
-               if exists == username:
-                  return jsonify(message="choose another username")
-
+               exists = register.query.filter_by(username=username).first()
+               if exists:
+                  return jsonify(message="Username Exists. Choose another one.")
+               
+               elif str(exists) != str(username):
+                  dbusername = session.get("username")
+                  dbpassword = HashGen(session.get("password"))
+                  dbtoken = session.get("token")
+                  dbemail = session.get("email")
+                  NewUser = register(
+                     username = dbusername, password = dbpassword , email = dbemail , token=dbtoken
+                  )
+                  try :
+                     db.session.add(NewUser)
+                     db.session.commit()
+                     print("DB Session Success")
+                     return jsonify(status="dbsuccess")
+                  except Exception as e:
+                     print("Error: Db session failed")
+                     print(e)
+                     return jsonify(message="Db failed")
+               else:
+                  return jsonify(message="")
             else :
-               return jsonify("Invalid Credentials...!!!")
-      
-      
-      
-
+               
+               return jsonify(message=f"Invalid OTP...!!!")
+            
       else :
          return jsonify(message="Empty Credentials..!!!")
          
-            
+ #_____________________ LOGIN___________________________
+@admin.route('/login', methods=['GET','POST'])
+def loginpage():
+   if request.method == 'GET':
+      return render_template("admin/admin_login.html")
          
          
 
@@ -143,8 +176,19 @@ def signup():
 
 def not_logged_in():
    return render_template('notloggedin.html')
+
+
+#### 
+#______________PINGING THE SERVER__________
+
+@admin.route("/ping",methods=['POST',"GET"])
+def ping():
+   return jsonify(ping="success")
 #_____________________ ADMIN RUNNNNING ______________________
 if __name__ == "__main__":
     print("\033[41mWarning: Please make sure that yo u have deleted the admin model\033[0m")
     admin.run(port=2222,debug=True,host='0.0.0.0')
     pass
+
+def main():
+   admin.run(port=2222,debug=True,host='0.0.0.0')

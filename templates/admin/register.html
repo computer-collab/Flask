@@ -14,15 +14,15 @@
 <body>
 <form  >
 <input id="NameBox" required type="text"placeholder="Name">
-  <input id = "EmailBox" type = "email" maxlength="150" placeholder="email id">
+  <input id = "EmailBox" type = "email"  placeholder="email id">
   <input id = "OtpBox" type="text"  maxlength="6" minlength="6" placeholder="OTP">
   
   <button id="GenOTP" type = "button">Generate OTP</button>
 <p id="info"></p>
 
-  <input id='UsernameBox' type='text' maxlength='15'  placeholder = 'username'  required>
-  <input id='PasswordBox' type='text' maxlength='15' placeholder="password"  required>
-  <input id='TokenBox' type='text' maxlength='15' placeholder="token"  required>
+  <input id='UsernameBox' type='text'   placeholder = 'username'  required>
+  <input id='PasswordBox' type='password'  placeholder="password"  required>
+  <input id='TokenBox' type='password'  placeholder="token"  required>
   <button type='button' id = "SubmitRegister">Submit</button>
 
 </form>
@@ -41,7 +41,6 @@ buttons.forEach(button => {
       const response = await fetch('/ping');
       if (!response.ok) throw new Error('Ping failed');
       const data = await response.json();
-      if (document.getElementById("NameBox").value && document.getElementById("EmailBox")  ){alert("Sending Email...")}
 
        
       const clickedButtonId = event.target.id;
@@ -55,6 +54,7 @@ buttons.forEach(button => {
 
     genotpbtn.addEventListener('click',generate=>{
       generate.preventDefault()
+      alert("Please wait!! Attempting to send mail.")
       const name = document.getElementById('NameBox').value;
       const email = document.getElementById('EmailBox').value;
       const request_type = "GenerateOtp"
@@ -97,11 +97,11 @@ submitbtn.addEventListener("click", e=>{
         }, body : JSON.stringify(register_pack)
       }).then(res=> res.json()).then (server => {
         
-        if (server.status === "dbexists"){
-          alert(server.status)
+        if (server.status === "dbsuccess"){
+          window.location.href = "/login"
         }
         else {
-          alert(server.message)
+          alert(server.message);
           
         } 
       })

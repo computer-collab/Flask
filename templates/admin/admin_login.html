@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+</head>
+<body>
+    <form>
+        <input id = "UsernameBox" placeholder="Username" type="text">
+        <input id = "PasswordBox" placeholder="Password" type="password">
+        <a href="/forgot_details">Forgot your details??</a>
+        <button id="submit">Submit</button>
+    </form>
+    <script>
+
+        document.getElementById("submit").addEventListener("click",e=>{
+            e.preventDefault();
+            const username = document.getElementById("UsernameBox").value;
+            const password = document.getElementById("PasswordBox").value;
+            const request_type = "SubmitDetails";
+            const login_pack = {
+                username : username ,password : password , request_type : request_type
+            }
+            fetch('/login',{
+                method : "POST",
+                headers : {
+                    "content-type" : "application/json"
+                }, body : JSON.stringify(login_pack)
+            })
+            .then (res => res.json()).then(server => {
+                alert(server.message)
+            })
+
+
+
+        })
+    </script>
+</body>
+</html>

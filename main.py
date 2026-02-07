@@ -1,7 +1,7 @@
 from flask import Flask, jsonify, request, session, render_template, redirect
 from flask_sqlalchemy import SQLAlchemy
-from modules.otp import GenerateOTP
-from signup import *
+from modules.mails import GenerateOTP
+from modules import *
 import admin
 
 
