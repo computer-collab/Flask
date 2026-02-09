@@ -30,13 +30,25 @@ admin.secret_key=os.urandom(24)
 
 # ################ DATABASES ################
 
-class register(db.Model):
+class RegisteredAdmins(db.Model):
   __bind_key__ = "dbadmin"
+  __tablename__ = "admins"
   name = db.Column(db.String(256),nullable = False)
   username = db.Column(db.String(256),primary_key=True)
   password = db.Column(db.String(1000),nullable=False)
   email = db.Column(db.String(256),nullable=False)
   token = db.Column(db.String(256))
+
+class RegisteringAdmins(db.Models):
+   __bind_key__ = "dbadmin"
+   __tablename__ = "admins"
+   name = db.Column(db.String(256),nullable = False)
+   username = db.Column(db.String(256),primary_key=True)
+   password = db.Column(db.String(1000),nullable=False)
+   email = db.Column(db.String(256),nullable=False)
+   token = db.Column(db.String(256))
+   verified = db.Column(db.Boolean,nullable = False, default=False)
+   
 
 
 
@@ -50,6 +62,7 @@ def error(x):
 
 @admin.route('/')
 def rootpage():
+   print(db.session.get(RegisteredAdmins,"rahul").email)
    return render_template("admin/root.html")
 #___________________________ Admin page _________________________________________
 @admin.route('/admin')
@@ -126,7 +139,7 @@ def AdminRegister():
                
                session["verified"] = True
                username = session.get("username")
-               exists = register.query.filter_by(username=username).first()
+               exists = RegisteredAdmins.query.filter_by(username=username).first()
                if exists:
                   return jsonify(message="Username Exists. Choose another one.")
                
@@ -136,13 +149,14 @@ def AdminRegister():
                   dbtoken = session.get("token")
                   dbemail = session.get("email")
                   dbname = session.get("name")
-                  NewUser = register(
+                  NewUser = RegisteringAdmins(
                      username = dbusername, password = dbpassword , email = dbemail , token=dbtoken, name = dbname
                   )
                   try :
                      db.session.add(NewUser)
                      db.session.commit()
                      print("DB Session Success")
+                     
                      return jsonify(status="dbsuccess")
                      # return redirect('/register/success')
                   except Exception as e:
@@ -163,7 +177,20 @@ def AdminRegister():
 def loginpage():
    if request.method == 'GET':
       return render_template("admin/admin_login.html")
-         
+   
+   elif request.method == "POST":
+      login_pack = request.get_json()
+      username = login_pack.get("username")
+      password = login_pack.get("password")
+      user = db.session.get(RegisteredAdmins,username)
+      if HashGen(password) == str(password):
+         session['admin'] = username
+      
+      elif HashGen(password) != str(password):
+         return jsonify(status = "failed",message = "Wrong Password")
+      
+
+
          
 
 
@@ -190,11 +217,21 @@ def not_logged_in():
 @admin.route("/register/success")
 def successs():
    return render_template("success.html")
+
+@admin.route("/logout",method=[POST])
+def logout():
+   data = request.get_json()
+   if str(data.get("request_type")).strip()=="logout":
+      session.clear()
+      return jsonify(status="logout_ok",message="successfully logged out")
 #______________PINGING THE SERVER__________
 
 @admin.route("/ping",methods=['POST',"GET"])
 def ping():
    return jsonify(ping="success")
+
+
+
 #_____________________ ADMIN RUNNNNING ______________________
 if __name__ == "__main__":
     print("\033[41mWarning: Please make sure that yo u have deleted the admin model\033[0m")

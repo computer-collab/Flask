@@ -13,28 +13,27 @@
         <button id="submit">Submit</button>
     </form>
     <script>
+const usernameBox = document.getElementById("UsernameBox")
+const passwordBox = document.getElementById("PasswordBox")
+const submitBtn = document.getElementById("submit")
+submitBtn.addEventListener("click",e=>{
 
-        document.getElementById("submit").addEventListener("click",e=>{
-            e.preventDefault();
-            const username = document.getElementById("UsernameBox").value;
-            const password = document.getElementById("PasswordBox").value;
-            const request_type = "SubmitDetails";
-            const login_pack = {
-                username : username ,password : password , request_type : request_type
-            }
-            fetch('/login',{
-                method : "POST",
-                headers : {
-                    "content-type" : "application/json"
-                }, body : JSON.stringify(login_pack)
-            })
-            .then (res => res.json()).then(server => {
-                alert(server.message)
-            })
+    const username = usernameBox.value;
+    const password = passwordBox.value;
+    const request_type = "login_request";
+    const login_pack = {
+        username : username,
+        password : password,
+        request_type : request_type
+    }
+    fetch("/login",{
+        methods : "POST",
+        headers : {
+            "content-type" : 'application/json'
+        }, body : JSON.stringify(login_pack)
+    }).then(res => res.json()).then(server => alert(server.message))
 
-
-
-        })
+})
     </script>
 </body>
 </html>

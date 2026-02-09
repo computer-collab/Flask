@@ -9,12 +9,18 @@
     background-color: aqua;
     max-width : 800px;
   }
+  .hidden{
+    display : none
+  }
 </style>
 </head>
 <body>
 <form  >
+  <div id = "OtpGenerationStep">
 <input id="NameBox" required type="text"placeholder="Name">
   <input id = "EmailBox" type = "email"  placeholder="email id">
+<button onclick="VerifyOtp()">Verify OTP</button>
+</div>
   <input id = "OtpBox" type="text"  maxlength="6" minlength="6" placeholder="OTP">
   
   <button id="GenOTP" type = "button">Generate OTP</button>
@@ -76,18 +82,19 @@ buttons.forEach(button => {
       })
     })
 
+
 submitbtn.addEventListener("click", e=>{
   e.preventDefault()
   const username = document.getElementById("UsernameBox").value;
   const password = document.getElementById("PasswordBox").value;
   const token = document.getElementById("TokenBox").value;
-  const otp =  document.getElementById("OtpBox").value
+
   const request_type = "SubmitDetails";
   const register_pack = {
     username : username,
     password : password,
     token : token,
-    otp : otp,
+    
     request_type : request_type
   }
       fetch('/register',{
