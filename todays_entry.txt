@@ -1,0 +1,10 @@
+
+==============================
+Time: 2026-02-11 17:00:25
+Threading in the session system was a failure bro. It doesnt work
+
+==============================
+
+==============================
+Time: 2026-02-11 17:46:31
+thsi is a test case

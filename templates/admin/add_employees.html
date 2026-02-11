@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Employees</title>
+</head>
+<body>
+    <form id = "addEmployees">
+        <input placeholder="Name" required type = "text" id="Name">
+        <input placeholder="Email" required type = "email"  required id="Email" >
+        <button type="button" onclick = "GenerateOTP()">Generate OTP</button>
+        <input placeholder = "OTP SENT TO EMAIL" id="OTP" required maxlenght="6">
+        <input placeholder = "Phone number" id="PhoneNumber" type="tel" maxlength="10" required>
+        <button id="SubmitBtn" onclick="SubmitForm()" type="submit">Submit</button>
+    </form><script>
+        const phonenumber = document.getElementById('PhoneNumber');
+        const name = document.getElementById('Name');
+        const otp = document.getElementById('OTP');
+        const email = document.getElementById('Email');
+        
+
+        function GenerateOTP(){
+
+            const genotp = {
+                name : name.value,
+                email : email.value,
+                request_type : "Generate otp"
+            } ;
+            alert(JSON.stringify(genotp))
+            fetch('/')
+            
+
+        }
+        document.getElementById('SubmitBtn').addEventListener('click', e =>{
+            const employee = {
+                name : name.value,
+                email : email.value,
+                phone_no : phonenumber.value,
+                request_type : "Submit Employee",
+                otp : otp.value
+            }
+            fetch('/addemployees', {
+                method : "POST",
+                headers : {
+                    "content-type" : "application/json"
+                }, body : JSON.stringify(employee)
+            }
+            ).then (res => res.json()).then (submit => {
+                alert(submit.EmployeeStatus, submit.message)
+                if (submit.EmployeeStatus=="success"){
+                    window.location.href = '/home'
+
+                } else if (submit.EmployeeStatus=="failed"){
+                    alert(submit.message)
+                }
+            })
+        })
+        
+    </script>
+</body>
+</html>
