@@ -1,5 +1,0 @@
-flask_sqlalchemy
-flask
-#otp.py
-werkzueg_security 
-smtplib

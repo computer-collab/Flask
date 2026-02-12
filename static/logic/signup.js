@@ -1,1 +1,0 @@
-alert("signup.js is successfully connected")

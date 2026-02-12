@@ -1,1 +1,0 @@
-alert("BAse.js is successsssfully connected")
