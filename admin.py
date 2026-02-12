@@ -39,16 +39,6 @@ class RegisteredAdmins(db.Model):
   email = db.Column(db.String(256),nullable=False)
   token = db.Column(db.String(256))
 
-# class RegisteringAdmins(db.Model):
-#    __bind_key__ = "dbadmin"
-#    __tablename__ = "admins"
-#    name = db.Column(db.String(256),nullable = False)
-#    username = db.Column(db.String(256),primary_key=True)
-#    password = db.Column(db.String(1000),nullable=False)
-#    email = db.Column(db.String(256),nullable=False)
-#    token = db.Column(db.String(256))
-#    verified = db.Column(db.Boolean,nullable = False, default=False)
-   
 
 
 
@@ -126,48 +116,55 @@ def AdminRegister():
             else :
                print("Sending mail failed")
                return jsonify(message="failed")   
-      
+            
+            ##submitting the otp;
+      elif admin_otp:
+         if str(admin_request_type) ==  str("SubmitOTP"):
+            session["userotp"] = admin_otp
+            if str(session.get('serverotp')) ==str (session.get("userotp")):
+               session["verified"] = True
+               
+               session.pop("serverotp")
+            else :
+               return jsonify(message=f"Invalid OTP...!!!")
+               
+            
+
       elif admin_username and admin_password and admin_token:
          if admin_request_type == "SubmitDetails":
             print(admin_request_type)
-            session["userotp"] = admin_otp
+            if session.get("verified") is False:
+               return jsonify(status="NotVerified")
             session["username"] = admin_username
             session["password"] =  HashGen(admin_password)
             session["token"] = admin_token
-            if str(session.get('serverotp')) ==str (session.get("userotp")):
-               session.pop("serverotp")
-               
-               session["verified"] = True
-               username = session.get("username")
-               exists = RegisteredAdmins.query.filter_by(username=username).first()
-               if exists:
-                  return jsonify(message="Username Exists. Choose another one.")
-               
-               elif str(exists) != str(username):
-                  dbusername = session.get("username")
-                  dbpassword = session.get("password")
-                  dbtoken = session.get("token")
-                  dbemail = session.get("email")
-                  dbname = session.get("name")
-                  NewUser = RegisteringAdmins(
-                     username = dbusername, password = dbpassword , email = dbemail , token=dbtoken, name = dbname
-                  )
-                  try :
-                     db.session.add(NewUser)
-                     db.session.commit()
-                     print("DB Session Success")
-                     
-                     return jsonify(status="dbsuccess")
-                     # return redirect('/register/success')
-                  except Exception as e:
-                     print("Error: Db session failed")
-                     print(e)
-                     return jsonify(message="An error occurred while setting the database. Please Try again.")
-               else:
-                  return jsonify(message="")
-            else :
-               
-               return jsonify(message=f"Invalid OTP...!!!")
+            username = session.get("username")
+            exists = RegisteredAdmins.query.filter_by(username=username).first()
+            if exists:
+               return jsonify(message="Username Exists. Choose another one.")
+            
+            elif str(exists) != str(username):
+               dbusername = session.get("username")
+               dbpassword = session.get("password")
+               dbtoken = session.get("token")
+               dbemail = session.get("email")
+               dbname = session.get("name")
+               NewUser = RegisteringAdmins(
+                  username = dbusername, password = dbpassword , email = dbemail , token=dbtoken, name = dbname
+               )
+               try :
+                  db.session.add(NewUser)
+                  db.session.commit()
+                  print("DB Session Success")
+                  
+                  return jsonify(status="dbsuccess")
+                  # return redirect('/register/success')
+               except Exception as e:
+                  print("Error: Db session failed")
+                  print(e)
+                  return jsonify(message="An error occurred while setting the database. Please Try again.")
+         else:
+            return jsonify(message="")
             
       else :
          return jsonify(message="Empty Credentials..!!!")

@@ -9,7 +9,7 @@
     background-color: aqua;
     max-width : 800px;
   }
-  .hidden{
+  .hiddn{
     display : none
   }
 </style>
@@ -19,20 +19,27 @@
   <div id = "OtpGenerationStep">
 <input id="NameBox" required type="text"placeholder="Name">
   <input id = "EmailBox" type = "email"  placeholder="email id">
-<button onclick="VerifyOtp()">Verify OTP</button>
-</div>
-  <input id = "OtpBox" type="text"  maxlength="6" minlength="6" placeholder="OTP">
-  
   <button id="GenOTP" type = "button">Generate OTP</button>
-<p id="info"></p>
+</div>
 
+<div id = "OtpVerificationStep">
+<input id = "OtpBox" type="text"  maxlength="6" minlength="6" placeholder="OTP">
+
+<button onclick="VerifyOtp()">Verify OTP</button>
+
+</div>
+<div id="SubmitDetails">
   <input id='UsernameBox' type='text'   placeholder = 'username'  required>
   <input id='PasswordBox' type='password'  placeholder="password"  required>
   <input id='TokenBox' type='password'  placeholder="token"  required>
+  <div id="messages" hidden > <small>This is a message text</small></div>
   <button type='button' id = "SubmitRegister">Submit</button>
-
+</div>
 </form>
 <script>
+  document.querySelectorAll("*").forEach(el => {
+  el.classList.add("hiddn");
+});
     const submitbtn = document.getElementById('SubmitRegister');
     const genotpbtn = document.getElementById('GenOTP')
  
