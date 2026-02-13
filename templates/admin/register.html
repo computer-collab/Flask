@@ -1,128 +1,208 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<style>
-  form {
-    display  : "block";
-    background-color: aqua;
-    max-width : 800px;
-  }
-  .hiddn{
-    display : none
-  }
-</style>
-</head>
-<body>
-<form  >
-  <div id = "OtpGenerationStep">
-<input id="NameBox" required type="text"placeholder="Name">
-  <input id = "EmailBox" type = "email"  placeholder="email id">
-  <button id="GenOTP" type = "button">Generate OTP</button>
-</div>
-
-<div id = "OtpVerificationStep">
-<input id = "OtpBox" type="text"  maxlength="6" minlength="6" placeholder="OTP">
-
-<button onclick="VerifyOtp()">Verify OTP</button>
-
-</div>
-<div id="SubmitDetails">
-  <input id='UsernameBox' type='text'   placeholder = 'username'  required>
-  <input id='PasswordBox' type='password'  placeholder="password"  required>
-  <input id='TokenBox' type='password'  placeholder="token"  required>
-  <div id="messages" hidden > <small>This is a message text</small></div>
-  <button type='button' id = "SubmitRegister">Submit</button>
-</div>
-</form>
-<script>
-  document.querySelectorAll("*").forEach(el => {
-  el.classList.add("hiddn");
-});
-    const submitbtn = document.getElementById('SubmitRegister');
-    const genotpbtn = document.getElementById('GenOTP')
- 
-const buttons = document.querySelectorAll('button');
-
-
-
-buttons.forEach(button => {
-  button.addEventListener('click', async (event) => {
-    try {
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    html{
+      display: flex;
+      height: 100%;
+      margin: 0;
       
-      const response = await fetch('/ping');
-      if (!response.ok) throw new Error('Ping failed');
-      const data = await response.json();
-
-       
-      const clickedButtonId = event.target.id;
- 
-
-    } catch (error) {
-      alert('Server is down. Please try again after some time');
     }
-  });
-});
-
-    genotpbtn.addEventListener('click',generate=>{
-      generate.preventDefault()
-      alert("Please wait!! Attempting to send mail.")
-      const name = document.getElementById('NameBox').value;
-      const email = document.getElementById('EmailBox').value;
-      const request_type = "GenerateOtp"
-      const register_pack = {
-        name : name,
-        email : email,
-        request_type : request_type
-      }
-      fetch('/register',{
-        method : "POST",
-        headers : {
-          "Content-Type" : "application/json"
-        }, body : JSON.stringify(register_pack)
-      })
-      .then(res=> res.json()).then (server => {
-        {
-          alert(server.message)
-        } 
-      })
-    })
-
-
-submitbtn.addEventListener("click", e=>{
-  e.preventDefault()
-  const username = document.getElementById("UsernameBox").value;
-  const password = document.getElementById("PasswordBox").value;
-  const token = document.getElementById("TokenBox").value;
-
-  const request_type = "SubmitDetails";
-  const register_pack = {
-    username : username,
-    password : password,
-    token : token,
+    body{
+      display: flex;
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+    justify-content: center; 
+    align-items: center; 
+    }
+    #MainBox{
+      display: flex;
+        text-align: center;
+        align-items: center;
+        justify-items: center;
+        height : 50vh;
+        aspect-ratio: 1/1;
+        max-height: 750px;
+    }
+    section {
+      display  : flex;
+      background-color: aqua;
+      max-width : 800px;
+      
+    }
+    .StepBoxes{
+      display: block;
+    }
+    .hiddn{
+      display : none
+    }
     
-    request_type : request_type
-  }
-      fetch('/register',{
-        method : "POST",
-        headers : {
-          "Content-Type" : "application/json"
-        }, body : JSON.stringify(register_pack)
-      }).then(res=> res.json()).then (server => {
+    </style>
+  </head>
+  <body>
+    <section id="MainBox" class = "StepBoxes">
+      <form  >
+        <div id = "OtpGenerationStep" class = "StepBoxes">
+          <input id="NameBox" required type="text"placeholder="Name">
+          <input id = "EmailBox" type = "email"  placeholder="email id">
+          <button id="GenOTP" type = "button">Generate OTP</button>
+        </div>
         
-        if (server.status === "dbsuccess"){
-          window.location.href = "/register/success"
-        }
-        else {
-          alert(server.message);
+        <div id = "OtpVerificationStep" class = "StepBoxes">
+          <input id = "OtpBox" type="text"  maxlength="6" minlength="6" placeholder="OTP">
           
-        } 
+          <button id = "VerifyOTP">Verify OTP</button>
+          
+        </div>
+        <div id="SubmitDetails" class = "StepBoxes">
+          <input id='UsernameBox' type='text'   placeholder = 'username'  required>
+          <input id='PasswordBox' type='password'  placeholder="password"  required>
+          <input id='TokenBox' type='password'  placeholder="token"  required>
+          <div id="messages"  > <small>This is a message text box.</small></div>
+          <button type='button' id = "SubmitRegister">Submit</button>
+        </div>
+      </form>
+    </section>
+    <script>
+
+
+    window.onload = function() {
+    const divboxes=document.querySelectorAll('.StepBoxes');
+    divboxes.forEach( div=>
+      {
+        div.classList.add("hiddn")
+      }
+    )
+
+    fetch("/register",{
+      method : "POST",
+      headers : {
+        "Content-Type": "application/json" 
+      }, body : JSON.stringify({
+        request_type : 'onload_response',
+       })
+
+    }).then(res=>res.json()).then(
+        server=>{
+          response = server.response;
+          if (response == "NewRegistration") document.getElementById("OtpGenerationStep").classList.remove("hiddn");
+          else if ( response == "OtpVerification") document.getElementById("OtpVerificationStep").classList.remove("hiddn")
+          else if (response == "SubmitDetails") document.getElementbyId("SubmitDetails").classList.remove("hiddn")
+        else window.alert("Error while getting the response  " + server.response)
+        }
+       )
+  };
+
+
+      const submitbtn = document.getElementById('SubmitRegister');
+      const genotpbtn = document.getElementById('GenOTP');
+      const verifyotpbtn = document.getElementById("VerifyOTP")
+      const MessageBox = document.getElementById('messages');
+      const buttons = document.querySelectorAll('button');
+
+
+
+  buttons.forEach(button => {
+    button.addEventListener('click', async (event) => {
+      try {
+        
+        const response = await fetch('/ping');
+        if (!response.ok) throw new Error('Ping failed');
+        const data = await response.json();
+
+        
+        const clickedButtonId = event.target.id;
+  
+
+      } catch (error) {
+        alert('Server is down. Please try again after some time');
+      }
+    });
+  });
+
+
+      genotpbtn.addEventListener('click',generate=>{
+        generate.preventDefault()
+        alert("Please wait!! Attempting to send mail.")
+        const name = document.getElementById('NameBox').value;
+        const email = document.getElementById('EmailBox').value;
+        const request_type = "GenerateOtp"
+        const register_pack = {
+          name : name,
+          email : email,
+          request_type : request_type
+        }
+        fetch('/register',{
+          method : "POST",
+          headers : {
+            "Content-Type" : "application/json"
+          }, body : JSON.stringify(register_pack)
+        })
+        .then(res=> res.json()).then (server => {
+          {
+            alert(server.message)
+          } 
+        })
       })
-})
 
 
-</script>
+  verifyotpbtn.addEventListener('click',e=>{
 
-</body>
-</html>
+    const otpBox =  document.getElementById('OtpBox')
+    const otp = otpBox.value;
+    const request_type = "VerifyOtp";
+    const register_pack = {
+      otp : otp,
+      request_type : request_type
+    }
+  fetch('/register',{
+    method : "POST",
+    headers : {
+      "content-type" : "application/json"
+    }, body : JSON.stringify(register_pack)
+  }).then(res=> res.json()).then(server=>{
+    MessageBox.innerHTML = server.message;
+  })
+
+  })
+
+
+  submitbtn.addEventListener("click", e=>{
+    e.preventDefault()
+    const username = document.getElementById("UsernameBox").value;
+    const password = document.getElementById("PasswordBox").value;
+    const token = document.getElementById("TokenBox").value;
+
+    const request_type = "SubmitDetails";
+    const register_pack = {
+      username : username,
+      password : password,
+      token : token,
+      
+      request_type : request_type
+    }
+        fetch('/register',{
+          method : "POST",
+          headers : {
+            "Content-Type" : "application/json"
+          }, body : JSON.stringify(register_pack)
+        }).then(res=> res.json()).then (server => {
+          
+          if (server.status === "dbsuccess"){
+            window.location.href = "/register/success"
+          }
+          else {
+            alert(server.message);
+            
+          } 
+        })
+  })
+
+
+  </script>
+
+  </body>
+  </html>

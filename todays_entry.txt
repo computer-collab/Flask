@@ -8,3 +8,7 @@ Threading in the session system was a failure bro. It doesnt work
 ==============================
 Time: 2026-02-11 17:46:31
 thsi is a test case
+
+==============================
+Time: 2026-02-13 17:54:55
+Created a flexible type user experience that response accordingly and switches between the three steps otp verification generation and submit details, depending on the users previous status of login, making it flexible to use and gives the user a better experience

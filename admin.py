@@ -39,6 +39,16 @@ class RegisteredAdmins(db.Model):
   email = db.Column(db.String(256),nullable=False)
   token = db.Column(db.String(256))
 
+class RegisteringAdmins(db.Model):
+  __bind_key__ = "dbadmin"
+  __tablename__ = "registeringadmins"
+  name = db.Column(db.String(256),nullable = False)
+  username = db.Column(db.String(256),primary_key=True)
+  password = db.Column(db.String(1000),nullable=False)
+  email = db.Column(db.String(256),nullable=False)
+  token = db.Column(db.String(256))
+  verified = db.Column(db.Boolean,nullable=False,default = False)
+
 
 
 
@@ -82,40 +92,51 @@ def AdminRegister():
       admin_token = register_pack.get('token')
       admin_otp = register_pack.get('otp')
       admin_request_type = register_pack.get('request_type')
-      admin_pack = [admin_name,admin_password, admin_email,  admin_token,admin_username]
+      print(admin_request_type)
       
+      # Before requst of the html,...
+      if admin_request_type == "onload_response":
+         if not session.get("user"):
+            return jsonify(response = "NewRegistration")
+         elif session.get("user") and session.get("verified"):
+            return jsonify(response = "SubmitDetails")
+         elif session.get("user") and not session.get("verified"):
+            return ("OtpVerification")
 
       # Requesting otp.
-      if admin_name and admin_email:
+      elif admin_name and admin_email:
          if admin_request_type == "GenerateOtp":
-            session['name'] = admin_name
+            if session.get("verified") is True and session.get("user")== str(admin_email):
+               return jsonify(status="verified")
+            else:
+               session['name'] = admin_name
 
-            session['email'] = admin_email
-            cooldown_time = session.get('cooldown')
-            if cooldown_time is None:
-               
-               if not session.get("name"):
-                  return jsonify(message="didnt get the name here")
-               reciever_email = session.get("email")
-               name =  session.get("name")
-               serverotp =  GenerateOTP(reciever_email,name)
-               session['serverotp'] = serverotp
-               print(session.get('now'))
-               
-               session['cooldown']= SetCooldown() 
-               print("cooldown has been set")
-               return jsonify(status="ok", message="Email has been sent.")
+               session['email'] = admin_email
+               cooldown_time = session.get('cooldown')
+               if cooldown_time is None:
+                  
+                  if not session.get("name"):
+                     return jsonify(message="didnt get the name here")
+                  reciever_email = session.get("email")
+                  name =  session.get("name")
+                  serverotp =  GenerateOTP(reciever_email,name)
+                  session['serverotp'] = serverotp
+                  print(session.get('now'))
+                  
+                  session['cooldown']= SetCooldown() 
+                  print("cooldown has been set")
+                  return jsonify(status="ok", message="Email has been sent.")
 
-            elif CheckCooldown(session.get('cooldown')):
-               session['cooldown']= SetCooldown()
-               session[f"serverotp"] = GenerateOTP(session.get('email'),session.get("name"))
-               
-               return jsonify(status="ok", message="Email has been resent.")
-            elif not CheckCooldown(session.get('cooldown')):
-               return jsonify(status="failed",message="The timer is under cooldown. please try again after sometime (Min cooldown : 30s)")
-            else :
-               print("Sending mail failed")
-               return jsonify(message="failed")   
+               elif CheckCooldown(session.get('cooldown')):
+                  session['cooldown']= SetCooldown()
+                  session[f"serverotp"] = GenerateOTP(session.get('email'),session.get("name"))
+                  
+                  return jsonify(status="ok", message="Email has been resent.")
+               elif not CheckCooldown(session.get('cooldown')):
+                  return jsonify(status="failed",message="The timer is under cooldown. please try again after sometime (Min cooldown : 30s)")
+               else :
+                  print("Sending mail failed")
+                  return jsonify(message="failed")   
             
             ##submitting the otp;
       elif admin_otp:
@@ -123,6 +144,7 @@ def AdminRegister():
             session["userotp"] = admin_otp
             if str(session.get('serverotp')) ==str (session.get("userotp")):
                session["verified"] = True
+               session["user"]=admin_email
                
                session.pop("serverotp")
             else :
