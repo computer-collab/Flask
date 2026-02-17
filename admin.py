@@ -1,3 +1,7 @@
+from config import ChangeRoot
+ChangeRoot()
+
+
 from flask import Flask, session, redirect, render_template,request, jsonify,flash
 from flask_sqlalchemy import SQLAlchemy
 from modules import HashGen
@@ -10,7 +14,8 @@ from concurrent.futures import ThreadPoolExecutor
 
 
 
-
+global OK 
+OK = "ok"
 POST = "POST"
 DELETE = "DELETE"
 GET = "GET"
@@ -101,13 +106,13 @@ def AdminRegister():
                
                session['cooldown']= SetCooldown() 
                print("cooldown has been set")
-               return jsonify(status="ok", message="Email has been sent.")
+               return jsonify(status=OK, message="Email has been sent.")
 
             elif CheckCooldown(session.get('cooldown')):
                session['cooldown']= SetCooldown()
                session[f"serverotp"] = GenerateOTP(session.get('email'),session.get("name"))
                
-               return jsonify(status="ok", message="Email has been resent.")
+               return jsonify(status=OK, message="Email has been resent.")
             elif not CheckCooldown(session.get('cooldown')):
                return jsonify(status="failed",message="The timer is under cooldown. please try again after sometime (Min cooldown : 30s)")
             else :
@@ -159,11 +164,22 @@ def AdminRegister():
          return jsonify(message="Empty Credentials..!!!")
          
  #_____________________ LOGIN___________________________
-@admin.route('/login', methods=['GET','POST'])
+@admin.route('/admin_login', methods=['GET','POST'])
 def loginpage():
    if request.method == 'GET':
       return render_template("admin/admin_login.html")
          
+   elif request.method == "POST":
+      print("post request recieved from the client")
+      login_pack = request.get_json()
+      admin_username = login_pack.get("username")
+      admin_password = HashGen(login_pack.get("password"))
+      server_pack = register.query.filter_by(username=admin_username)
+      print("Sending the post from server...")
+      if  server_pack:
+         return jsonify(message=f"{server_pack.username}  {server_pack.password}")
+      return jsonify(status=OK,message="login success ful")
+      
          
 
 
@@ -197,6 +213,5 @@ def ping():
    return jsonify(ping="success")
 #_____________________ ADMIN RUNNNNING ______________________
 if __name__ == "__main__":
-    print("\033[41mWarning: Please make sure that yo u have deleted the admin model\033[0m")
     admin.run(port=2222,debug=True,host='0.0.0.0')
     pass

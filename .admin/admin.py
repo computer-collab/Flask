@@ -1,7 +1,10 @@
+from config import ChangeRoot
+ChangeRoot()
+
+
 from flask import Flask, session, redirect, render_template,request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash
-#from ..modules.otp import *
 
 
 admin = Flask(__name__)

@@ -22,15 +22,13 @@
             const login_pack = {
                 username : username ,password : password , request_type : request_type
             }
-            fetch('/login',{
+            window.alert("SEnding details")
+            fetch("/admin_login",{
                 method : "POST",
                 headers : {
                     "content-type" : "application/json"
                 }, body : JSON.stringify(login_pack)
-            })
-            .then (res => res.json()).then(server => {
-                alert(server.message)
-            })
+            }).then (res=>res.json()).then(server=>{alert(server.message)})
 
 
 
