@@ -190,7 +190,19 @@ def loginpage():
       return jsonify(status=OK,message="login success ful")
       
          
+## ________________ADD_EMPLOYEES_____________________________
+@admin.route('/add_employees',methods=[POST,GET])
+def add_employees():
+   if not session.get("admin"):
+      return redirect("/admin_login")
+   else:
+      if request.method == GET:
+         return render_template("admin/add_employees.html")
+      elif request.method == POST:
+         detail_pack=request.get_json()
+         pass
 
+      
 
         ######################################################
         #                   REDIRECTS                        #
