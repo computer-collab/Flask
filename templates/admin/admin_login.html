@@ -10,6 +10,7 @@
         <input id = "UsernameBox" placeholder="Username" type="text">
         <input id = "PasswordBox" placeholder="Password" type="password">
         <a href="/forgot_details">Forgot your details??</a>
+        <div id="message"></div>
         <button id="submit">Submit</button>
     </form>
     <script>
@@ -22,13 +23,18 @@
             const login_pack = {
                 username : username ,password : password , request_type : request_type
             }
-            window.alert("SEnding details")
+            
             fetch("/admin_login",{
                 method : "POST",
                 headers : {
                     "content-type" : "application/json"
                 }, body : JSON.stringify(login_pack)
-            }).then (res=>res.json()).then(server=>{alert(server.message)})
+            }).then (res=>res.json()).then(server=>{
+                if (server.status=="ok"){
+                    window.location.href = "/admin"
+                }
+                else document.getElementById("message").innerHTML=server.message
+            })
 
 
 

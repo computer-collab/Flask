@@ -1,7 +1,7 @@
 import random, smtplib
 from flask import flash
 
-print("mails service approached")
+
 def GenerateOTP(email,Name):
     if not Name:
         Name = "**Name not defined**\n"
@@ -32,5 +32,3 @@ def GenerateOTP(email,Name):
         return "Error_exception"
     
 
-
-print("mails service approach ended")

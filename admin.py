@@ -5,11 +5,11 @@ ChangeRoot()
 from flask import Flask, session, redirect, render_template,request, jsonify,flash
 from flask_sqlalchemy import SQLAlchemy
 from modules import HashGen
-from modules import GenerateOTP
+from modules import GenerateOTP,VerifyCredentials
 import json,os
 from modules import CheckCooldown, SetCooldown , HashGen
 from datetime import *
-from concurrent.futures import ThreadPoolExecutor
+
 
 
 
@@ -173,11 +173,20 @@ def loginpage():
       print("post request recieved from the client")
       login_pack = request.get_json()
       admin_username = login_pack.get("username")
-      admin_password = HashGen(login_pack.get("password"))
-      server_pack = register.query.filter_by(username=admin_username)
+      admin_password = login_pack.get("password")
+      server_pack = register.query.filter_by(username=admin_username).first()
       print("Sending the post from server...")
       if  server_pack:
+         if VerifyCredentials(server_pack.password,admin_password):
+            session["admin"]=admin_username
+            session["loggedin"]=True
+            return jsonify(status=OK,message="Credentials has been verified")
+         else :
+            return jsonify(message=f"{server_pack.password}\n {admin_password}")
          return jsonify(message=f"{server_pack.username}  {server_pack.password}")
+      elif server_pack is None:
+         print("Usernot found")
+         return jsonify(status = "fail", message = "User Not found")
       return jsonify(status=OK,message="login success ful")
       
          
