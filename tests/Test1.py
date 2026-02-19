@@ -1,7 +1,7 @@
 from flask import *
 # from database import User
 from profiles import profiles
-from database import *
+from models import *
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"]="sqlite:///example.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False

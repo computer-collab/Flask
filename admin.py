@@ -1,15 +1,12 @@
-from config import ChangeRoot
-ChangeRoot()
-
-
+#DEFAULTS
 from flask import Flask, session, redirect, render_template,request, jsonify,flash
 from flask_sqlalchemy import SQLAlchemy
-from modules import HashGen
-from modules import GenerateOTP,VerifyCredentials
-import json,os
-from modules import CheckCooldown, SetCooldown , HashGen
 from datetime import *
+import json,os
 
+#HANDMADE
+from modules import HashGen,GenerateOTP,VerifyCredentials,CheckCooldown, SetCooldown , HashGen
+from models.models import db, register
 
 
 
@@ -26,22 +23,13 @@ GET = "GET"
 admin = Flask(__name__)
 admin.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///admin/employees.db"
 admin.config['SQLALCHEMY_BINDS'] = { 'dbadmin' :"sqlite:///admin/admin.db" }
-db = SQLAlchemy(admin)
 admin.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 admin.secret_key=os.urandom(24)
-
+db.init_app(admin)
 
 
 
 # ################ DATABASES ################
-
-class register(db.Model):
-  __bind_key__ = "dbadmin"
-  name = db.Column(db.String(256),nullable = False)
-  username = db.Column(db.String(256),primary_key=True)
-  password = db.Column(db.String(1000),nullable=False)
-  email = db.Column(db.String(256),nullable=False)
-  token = db.Column(db.String(256))
 
 
 
@@ -162,7 +150,11 @@ def AdminRegister():
             
       else :
          return jsonify(message="Empty Credentials..!!!")
-         
+#___________modifying the admin registration exp____________
+@admin.route("/register/verification",methods=[POST,GET])
+def registerVerification():
+   if True:
+      return jsonify(message="ok")
  #_____________________ LOGIN___________________________
 @admin.route('/admin_login', methods=['GET','POST'])
 def loginpage():

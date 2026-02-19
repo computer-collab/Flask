@@ -2,7 +2,7 @@ from flask import Flask, jsonify, request, session, render_template, redirect
 from flask_sqlalchemy import SQLAlchemy
 from modules.mails import GenerateOTP
 from modules import *
-import admin
+
 
 
 
@@ -51,64 +51,12 @@ def welcome():
 #____________ SIGN UP _________________
 @app.route('/signup',methods=["GET","POST"])
 def signup():
-    if request.method == "GET":
-        print(f"\n{request.method} :  Sign up page was requested")
-        return render_template("signup.html")
-
-    if request.method == "POST":
-        payload = request.get_json()
-        request_type = payload.get("request_type")
-        
-        #requesting the otp
-        if request_type == "generateotp":
-            email = payload.get("email")
-            session['user'] = email
-            session['otp'] = GenerateOTP(email)
-            serverotp = session['otp']
-            if serverotp :
-                print("Response sent")
-                return jsonify(message="otpsent")
-            elif str(serverotp) =="Error_exception":
-                print (f"\033[31m Error\033[0m : Unknown error has occurred...")
-                return jsonify(message = "error")
-
-
-            #submitting the otp
-        if request_type == "submitotp":
-            clientotp = payload.get("otp")
-            serverotp = session.get('otp')
-            if not serverotp:
-                print("\033[31mError \033[0m: Variable holding the otp was not found")
-            if str(serverotp) == str(clientotp):
-                print("\nOTP Verification Successful")
-                session.pop('otp',None)
-                return jsonify(login="success", loginmessage="Login was succesfully verified by the server")
-            else :
-                print("OTP Verification failed")
-                return jsonify(login="failed")
+     pass 
 
 @app.route("/password",methods=["POST"])
 def passwordsubmit():
     print("Password received")
-    packet = request.get_json()
-    request_type = request.get("request_type")
-    if request_type == "Submit Password":
-        RawPassword = packet.get("password")
-        session['password']= HashGen(RawPassword)
-    
-        SignedUser =  SignedUsers(
-            Email = session.get('user'),
-            Password =  session.get('password')
-    )
-    try :
-        db.session.add(SignedUser)
-        db.session.commit()
-        return jsonify(password_status = "successful", message="Password Save successful")
-
-    except Exception as error:
-        print(f"Error has occurred\n{error}")
-        return jsonify(password_status="failed", message="Password save failed")
-
+    pass
 
 #_____________login page____________
 @app.route("/login")

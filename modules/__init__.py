@@ -1,4 +1,6 @@
-from .mails import GenerateOTP
-from .time import *
-from .signup import *
+from modules.mails import GenerateOTP
+from modules.time import *
+from modules.signup import *
 
+from modules.config import *
+ChangeRoot()
