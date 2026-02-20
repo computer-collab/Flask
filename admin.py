@@ -11,7 +11,6 @@ from models.models import db, register
 
 
 
-global OK 
 OK = "ok"
 POST = "POST"
 DELETE = "DELETE"
@@ -22,7 +21,10 @@ GET = "GET"
 # #############   APP CONFIGURATIONS ###########################
 admin = Flask(__name__)
 admin.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///admin/employees.db"
-admin.config['SQLALCHEMY_BINDS'] = { 'dbadmin' :"sqlite:///admin/admin.db" }
+admin.config['SQLALCHEMY_BINDS'] = { 
+   'dbadmin' :"sqlite:///admin/admin.db",
+   "employees" :  "sqlite:///admin/employees/employees.db"
+                                     }
 admin.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 admin.secret_key=os.urandom(24)
 db.init_app(admin)
@@ -57,9 +59,9 @@ def adminpage():
 
 #____________________________ADMIN REGISTRY________________________
 
-@admin.route('/register', methods = ['GET','POST'])
+@admin.route('/add_admin', methods = ['GET','POST'])
 def AdminRegister():
-   
+   #Temporarily downing the register page
    if request.method=='GET':
       return render_template('admin/register.html')
       
