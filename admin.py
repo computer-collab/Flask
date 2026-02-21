@@ -165,20 +165,17 @@ def loginpage():
       return render_template("admin/admin_login.html")
          
    elif request.method == "POST":
-      print("post request recieved from the client")
       login_pack = request.get_json()
       admin_username = login_pack.get("username")
       admin_password = login_pack.get("password")
       server_pack = register.query.filter_by(username=admin_username).first()
-      print("Sending the post from server...")
       if  server_pack:
          if VerifyCredentials(server_pack.password,admin_password):
             session["admin"]=admin_username
             session["loggedin"]=True
             return jsonify(status=OK,message="Credentials has been verified")
          else :
-            return jsonify(message=f"{server_pack.password}\n {admin_password}")
-         return jsonify(message=f"{server_pack.username}  {server_pack.password}")
+            return jsonify(message=f"Invalid Credentials...!!!")
       elif server_pack is None:
          print("Usernot found")
          return jsonify(status = "fail", message = "User Not found")
