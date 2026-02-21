@@ -6,7 +6,7 @@ import json,os
 
 #HANDMADE
 from modules import HashGen,GenerateOTP,VerifyCredentials,CheckCooldown, SetCooldown , HashGen
-from models.models import db, register
+from Models.models import db, register
 
 
 
