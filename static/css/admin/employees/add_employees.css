@@ -1,0 +1,32 @@
+html{
+    background-color: #b394c7;
+    font-family: Arial, sans-serif;
+}
+input[type="radio"]{
+    border: 10px solid black;
+}
+label{
+    font-size: 20px;
+    margin-right: 10px;
+    background-color: salmon colored solid 2px;
+}
+.radio-group{
+    /* display: flex-box; */
+    /* flex-direction: row; */
+    /* align-items: center; */
+    background-color: magenta;
+    width: fit-content;
+}
+#radio-container{
+    
+    display: flex;           /* Correct flex display */
+    flex-direction: row;     /* Arrange items in a row */
+    /* align-items: center;     Vertically center items */
+    background-color: magenta;
+    width: fit-content;      /* Container shrinks to fit content */
+    gap: 10px;         
+}
+.SelectedRadio{
+    background-color: cyan;
+    border: 10px solid brown;
+}

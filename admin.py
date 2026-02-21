@@ -6,7 +6,8 @@ import json,os
 
 #HANDMADE
 from modules import HashGen,GenerateOTP,VerifyCredentials,CheckCooldown, SetCooldown , HashGen
-from models.models import db, register
+from Models import db, register
+from routes.profiles import profiles_bp
 
 
 
@@ -226,6 +227,8 @@ def successs():
 @admin.route("/ping",methods=['POST',"GET"])
 def ping():
    return jsonify(ping="success")
+#_____________________REGISTER BLUEPRINT___________________________
+admin.register_blueprint(profiles_bp)
 #_____________________ ADMIN RUNNNNING ______________________
 if __name__ == "__main__":
     admin.run(port=2222,debug=True,host='0.0.0.0')

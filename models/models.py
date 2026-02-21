@@ -23,6 +23,7 @@ class RegisteringAdmins(db.Model):
 class Employees(db.Model):
   __bind_key__ = "employees"
   __tablename__ = "Employees"
+  profile_pic = db.Column(db.String(2000),nullable=False)
   name = db.Column(db.String(200),nullable=False)
   phone_number = db.Column(db.String(10),primary_key=True)
   email_address = db.Column(db.String(2000),nullable=False)
