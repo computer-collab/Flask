@@ -1,36 +1,69 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add Employees</title>
-    </head>
-    <link rel = "stylesheet" href = "{{ url_for('static', filename='css/admin/employees/add_employees.css') }}">
+    <style>
+        #ProfilePic {
+            /* color: blueviolet; */
+            background-color: blueviolet;
+        }
+        #PreviewBackground{
+            height: 100vh;
+            width: 100vw;
+            display: none;
+            background-color: rgba(0,0,0,0.5 );
+        }
+    </style>
+</head>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin/employees/add_employees.css') }}">
+
 <body>
     <h1>Add Employees</h1>
     <form>
-        <label for = "NameBox">Name:</label>
-        <input type = "text" id = "NameBox" name = "NameBox"><br><br>
-        <label for = "EmailBox">Email:</label>
-        <input type = "text" id = "EmailBox" name = "EmailBox"><br><br>
-        <label for = "WorkerTypeBox">Worker Type:</label>
-        <input type = "text" id = "WorkerTypeBox" name = "WorkerTypeBox"><br><br>
-        <div id="radio-container"><div class="radio-group">
-        <label class="radio-label" for= "AdminRadio">Admin</label>
-        <input type = "radio" class="radio-label" id = "AdminRadio" name = "WorkerType" value = "Admin">
-    </DIV>
-        <div class="radio-group">
-        <label for= "EmployeeRadio" class="radio-label">Employee</label>
-        
-        <input type = "radio" id = "EmployeeRadio" class="radio-label" name = "WorkerType" value = "Employee"><br><br>
-        </div>  
-        <script src="{{ url_for('static', filename='js/admin/employees/add_employees.js') }}"></script>
-        
-        <div id="message"></div>
-
+        <label for="ProfilePic">Profile Picture : </label>
+        <input id="ProfilePicInput"  type="file" hidden>
+        <button id="ProfilePic" type="button">Choose Picture </button><br>
+        <span id="FileName"></span> <button  id="PreviewPicButton" type="button" >Preview Image</button>
+        <div id="PreviewBackground" >
+            <div id="PreviewForeground" >
+                <img id="Preview" width="500">
+            </div>
         </div>
-        <input type = "submit" value = "Submit">
-        <button type="button" onclick="clicked()">Back</button>
-    </body>
-    </html> 
+
+        <label for="NameBox">Name:</label>
+        <input type="text" id="NameBox" name="NameBox"><br><br>
+        <label for="EmailBox">Email:</label>
+        <input type="text" id="EmailBox" name="EmailBox"><br><br>
+        <label for="WorkerTypeBox">Worker Type:</label>
+        <input type="text" id="WorkerTypeBox" name="WorkerTypeBox"><br><br>
+        <div id="radio-container">
+            <div class="radio-group">
+                <label class="radio-label" for="AdminRadio">Admin</label>
+                <input type="radio" class="radio-label" id="AdminRadio" name="WorkerType" value="Admin">
+            </DIV>
+            <div class="radio-group">
+                <label for="EmployeeRadio" class="radio-label">Employee</label>
+
+                <input type="radio" id="EmployeeRadio" class="radio-label" name="WorkerType" value="Employee"><br><br>
+            </div>
+
+            <div id="message"></div>
+
+    <!-- Choose a color:
+    <select id="colorSelect">
+      <option value="red">Red</option>
+      <option value="blue">Blue</option>
+      <option value="green">Green</option>
+    </select> -->
+    </form>
+    </div>
+    <input type="submit" value="Submit">
+    <button type="button" onclick="clicked()">Back</button>
+    <script src="{{ url_for('static', filename='js/admin/employees/add_employees.js') }}"></script>
+</body>
+
+</html>
