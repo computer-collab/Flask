@@ -1,32 +1,35 @@
 html{
-    background-color: #b394c7;
+    background-color: #2b292a;
     font-family: Arial, sans-serif;
 }
-input[type="radio"]{
-    border: 10px solid black;
+select{
+    background-color: rgb(66, 196, 15);
 }
 label{
     font-size: 20px;
     margin-right: 10px;
     background-color: salmon colored solid 2px;
 }
-.radio-group{
-    /* display: flex-box; */
-    /* flex-direction: row; */
-    /* align-items: center; */
-    background-color: magenta;
-    width: fit-content;
-}
-#radio-container{
+#PreviewBackground{
     
-    display: flex;           /* Correct flex display */
-    flex-direction: row;     /* Arrange items in a row */
-    /* align-items: center;     Vertically center items */
-    background-color: magenta;
-    width: fit-content;      /* Container shrinks to fit content */
-    gap: 10px;         
+    position : fixed;
+    top: 0px;
+    left: 0px;
+    align-items: center;
+    justify-content: center;
+
+    z-index: 9999;
 }
-.SelectedRadio{ 
-    background-color: cyan;
-    border: 10px solid brown;
+#PreviewForeground{
+
+    position:absolute;
+
+    top:50%;
+    left:50%;
+
+    transform:translate(-50%,-50%);
+    display: grid;
+    background-color: antiquewhite;
+    height: fit-content;
+    width: fit-content;
 }
