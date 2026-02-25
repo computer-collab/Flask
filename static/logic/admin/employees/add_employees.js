@@ -18,19 +18,15 @@ function clicked (){ alert("The element was clicked")}
 let StoredPhoto = null;
 
 
-
-
-WorkerTypeBox.
-    addEventListener("change", () => {
-        if (WorkerTypeBox.value === "others") {
-            inputobj = document.getElementById("OthershelperDiv");
-            inputbtn = document.getElementById("othersbutton");
-            inputobj.hidden = false;
-            
-        
-        }else {
-                document.getElementById("OthershelperDiv").hidden = true
-            }})
+// Temporary profile pic storage and preview
+ProfilePicInput.addEventListener("change",(x)=>{
+    StoredPhoto = ProfilePicInput.files[0];
+    const reader = new FileReader();
+    reader.onload =  (ed)=>{
+        Preview.src = ed.target.result;
+    }
+    reader.readAsDataURL (StoredPhoto)
+})
 
 
 PreviewBackground.addEventListener("click",()=>{
@@ -46,12 +42,18 @@ ProfilePic.addEventListener("click", () => {
 ProfilePicInput.addEventListener("change", () => {
     const file = ProfilePicInput.files[0];
     if (!file) return;
-    preview.src = URL.createObjectURL(file);
+    Preview.src = URL.createObjectURL(file);
 });
 PreviewButton.addEventListener('click', () => {
     if(PreviewBackground.hidden == true || PreviewBackground.style.display == "none"){
-        PreviewBackground.hidden = false
+       
+        if (StoredPhoto == null){
+            alert("Empty Photo");
+        }
+        else{
+             PreviewBackground.hidden = false
         PreviewBackground.style.display = "block"
+        }
     } else {
         clicked();
         console.log(PreviewBackground.style.display , PreviewBackground.hidden)
@@ -59,28 +61,20 @@ PreviewButton.addEventListener('click', () => {
 })
 
 
+WorkerTypeBox.
+    addEventListener("change", () => {
+        if (WorkerTypeBox.value === "others") {
+            inputobj = document.getElementById("OthershelperDiv");
+            inputbtn = document.getElementById("othersbutton");
+            inputobj.hidden = false;
+            
+        
+        }else {
+                document.getElementById("OthershelperDiv").hidden = true
+            }})
 
 
 
 
 
-let storedPhoto = null;
 
-const input = document.getElementById("ProfilePicInput");
-const preview = document.getElementById("Preview");
-
-input.addEventListener("change", function () {
-
-    storedPhoto = input.files[0];
-
-    const reader = new FileReader();
-
-    reader.onload = function (e) {
-
-        preview.src = e.target.result;
-
-    }
-
-    reader.readAsDataURL(storedPhoto);
-
-});
