@@ -24,9 +24,9 @@
 
 <body>
     <h1>Add Employees</h1>
-    <form>
+    <form action="/add_employees"  enctype="multipart/form-data" method="post">
         <label for="ProfilePic">Profile Picture : </label>
-        <input id="ProfilePicInput" type="file" hidden>
+        <input id="ProfilePicInput" type="file" name="file" hidden>
         <button id="ProfilePic" type="button">Choose Picture </button><br>
         <span id="FileName"></span> <button id="PreviewPicButton" type="button">Preview Image</button>
         
@@ -52,16 +52,15 @@
         <div id="message"></div>
 
         
+        <button type="submit" value="Submit">Submit</button>
     </form>
     </div>
-    <input type="submit" value="Submit">
-    <button type="button" onclick="clicked()">Back</button>
     <div id="PreviewBackground" hidden>
             <div id="PreviewForeground">
                 <img alt = "preview image"id="Preview" width="500">
             </div>
         </div>
-    <script src="{{ url_for('static', filename='logic/admin/employees/add_employees.js') }}"></script>
+    <script src="/static/logic/admin/employees/add_employees.js"></script>
 </body>
 
 </html>

@@ -14,13 +14,17 @@ const PreviewForeground = document.getElementById("PreviewForeground");
 const PreviewBackground = document.getElementById("PreviewBackground");
 const PreviewButton = document.getElementById("PreviewPicButton");
 function clicked (){ alert("The element was clicked")}
-
-let StoredPhoto = null;
+let tempPhoto = null;//Used to temporarily copy the photo
+let StoredPhoto = null;// Used to store the actual photo
 
 
 // Temporary profile pic storage and preview
 ProfilePicInput.addEventListener("change",(x)=>{
-    StoredPhoto = ProfilePicInput.files[0];
+    tempPhoto = ProfilePicInput.files[0];
+    if(tempPhoto){
+        StoredPhoto = tempPhoto;    
+    }
+    
     const reader = new FileReader();
     reader.onload =  (ed)=>{
         Preview.src = ed.target.result;
@@ -39,11 +43,11 @@ ProfilePic.addEventListener("click", () => {
     ProfilePicInput.click();
 });
 
-ProfilePicInput.addEventListener("change", () => {
-    const file = ProfilePicInput.files[0];
-    if (!file) return;
-    Preview.src = URL.createObjectURL(file);
-});
+// ProfilePicInput.addEventListener("change", () => {
+//     const file = ProfilePicInput.files[0];
+//     if (!file)  return;
+//     Preview.src = URL.createObjectURL(file);
+// });
 PreviewButton.addEventListener('click', () => {
     if(PreviewBackground.hidden == true || PreviewBackground.style.display == "none"){
        

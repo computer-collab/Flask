@@ -29,11 +29,11 @@ button{
 }
 input:active {
 
- transform: translate(3px,1px);
+ transform: translate(-3px,-1px);
  /* transform: translatex(); */
 
  box-shadow:
- 0 4px 10px rgba(0,0,0,0.6);
+ inset 0 4px 10px rgba(0,0,0,0.6);
 
 }
 body *{
