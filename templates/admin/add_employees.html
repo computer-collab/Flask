@@ -24,35 +24,36 @@
 
 <body>
     <h1>Add Employees</h1>
-    <form action="/add_employees"  enctype="multipart/form-data" method="post">
+    <form action="/add_employees" enctype="multipart/form-data" method="post">
         <label for="ProfilePic">Profile Picture : </label>
-        <input id="ProfilePicInput" type="file" name="file" hidden>
-        <button id="ProfilePic" type="button">Choose Picture </button><br>
+        <input id="ProfilePicInput" type="file" name="file" hidden >
+        <button id="ProfilePic" type="button" >Choose Picture </button><br>
         <span id="FileName"></span> <button id="PreviewPicButton" type="button">Preview Image</button>
         
         <br>
         <label for="NameBox">Name:</label>
-        <input type="text" id="NameBox" name="NameBox"><br><br>
+        <input type="text" id="NameBox" required name="NameBox"><br><br>
         <label for="EmailBox">Email:</label>
-        <input type="text" id="EmailBox" name="EmailBox"><br><br>
+        <input type="text" id="EmailBox" required name="EmailBox"><br><br>
         <label for="WorkerTypeBox">Worker Type:</label>
-        <input type="text" id="WorkerTypeBox" name="WorkerTypeBox"><br><br>
+        <input type="text"  id="WorkerTypeBox" name="WorkerTypeBox"     required><br><br>
 
         <div id="SelectorBox">
-            <select name="WorkerType" id="WorkerType">
+            <select name="WorkerType" id="WorkerType" required>
+                <option value=""> Select option</option>
                 <option value="admin">Admin</option>
                 <option value="others">Others</option>
             </select>
             <div id="OthershelperDiv" hidden><input id="Others">
-                <button type="button" id="othersbutton">Submit</button>
+                
             </div>
         </div>
 
 
-        <div id="message"></div>
+        <div id="message">tHIS IS MESSAGE</div>
 
         
-        <button type="submit" value="Submit">Submit</button>
+        <button type="button"  id = "submitbutton" value="Submit">Submit</button>
     </form>
     </div>
     <div id="PreviewBackground" hidden>
@@ -60,7 +61,9 @@
                 <img alt = "preview image"id="Preview" width="500">
             </div>
         </div>
-    <script src="/static/logic/admin/employees/add_employees.js"></script>
+    
+        <script src="/static/logic/admin/employees/add_employees.js"></script>
+
 </body>
 
 </html>

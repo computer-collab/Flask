@@ -191,13 +191,15 @@ def add_employees():
       if request.method == GET:
          return render_template("admin/add_employees.html")
       elif request.method == POST:
-          if "file"  not in  request.files:
-             return "No files detechtes"
-          elif request.files["file"]:
-             print(float(request.files["file"].content_length))
-          file = request.files["file"]
-          file.save("data/"+file.filename)
-          return "Hello worl;d"
+         if request.files["file"]:
+            print(float(request.files["file"].content_length))
+            file = request.files["file"]
+            file.save("data/"+file.filename)
+            return jsonify(message="not ok")
+         else:
+            return jsonify(message="ok")
+            
+         
 
          
 

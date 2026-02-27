@@ -5,6 +5,7 @@ const MessageBox = document.getElementById("message");
 const NameBox = document.getElementById("NameBox");
 const EmailBox = document.getElementById("EmailBox");
 const WorkerTypeBox = document.getElementById("WorkerType");
+const FORM = document.querySelector("form");
 const ProfilePicInput = document.getElementById("ProfilePicInput");
 const ProfilePic = document.getElementById("ProfilePic");
 
@@ -43,18 +44,12 @@ ProfilePic.addEventListener("click", () => {
     ProfilePicInput.click();
 });
 
-// ProfilePicInput.addEventListener("change", () => {
-//     const file = ProfilePicInput.files[0];
-//     if (!file)  return;
-//     Preview.src = URL.createObjectURL(file);
-// });
+
 PreviewButton.addEventListener('click', () => {
     if(PreviewBackground.hidden == true || PreviewBackground.style.display == "none"){
-       
         if (StoredPhoto == null){
             alert("Empty Photo");
-        }
-        else{
+        }else{
              PreviewBackground.hidden = false
         PreviewBackground.style.display = "block"
         }
@@ -78,7 +73,11 @@ WorkerTypeBox.
             }})
 
 
-
-
-
-
+document.getElementById("submitbutton").addEventListener("click",Submit=>{
+    Submit.preventDefault()
+    if (!StoredPhoto){
+        alert("empty photo")
+        return
+    }
+        FORM.requestSubmit()
+})
