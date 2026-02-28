@@ -45,25 +45,29 @@ body *{
     position : fixed;
     top: 0px;
     left: 0px;
+    inset: 0;
     align-items: center;
     justify-content: center;
+    height: 100vh;
+    width: 100vw;
 
     z-index: 9999;
 }
 #PreviewForeground{
 
-    position:absolute;
-
-    top:50%;
-    left:50%;
-
-    transform:translate(-50%,-50%);
+   
     display: grid;
     background-color: antiquewhite;
-    height: fit-content;
+    overflow: scroll;
     width: fit-content;
+
 }
 #ProfilePic{
     background-color: #cb17d1;
+    
+
+   
+    width: 50vw;
+   
     
 }

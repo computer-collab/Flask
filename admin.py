@@ -166,7 +166,7 @@ def loginpage():
          
    elif request.method == "POST":
       login_pack = request.get_json()
-      admin_username = login_pack.get("username")
+      admin_username = login_pack.get("username").lower()
       admin_password = login_pack.get("password")
       server_pack = register.query.filter_by(username=admin_username).first()
       if  server_pack:
