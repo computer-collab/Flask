@@ -47,11 +47,12 @@ ProfilePic.addEventListener("click", () => {
 
 PreviewButton.addEventListener('click', () => {
     if(PreviewBackground.hidden == true || PreviewBackground.style.display == "none"){
-        if (StoredPhoto == null){
+        if (!StoredPhoto.type.startsWith("image/") || StoredPhoto==null ){
             alert("Empty Photo");
-        }else{
+        }else {
              PreviewBackground.hidden = false
-        PreviewBackground.style.display = "block"
+        PreviewBackground.style.display = "flex"
+        
         }
     } else {
         clicked();

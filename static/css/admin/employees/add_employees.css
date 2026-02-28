@@ -56,18 +56,22 @@ body *{
 #PreviewForeground{
 
    
-    display: grid;
+    display: flex;
     background-color: antiquewhite;
-    overflow: scroll;
-    width: fit-content;
-
+    overflow-x: scroll;
+    width: 50vw;
+    max-width: 200px;
+    
+    
 }
 #ProfilePic{
     background-color: #cb17d1;
-    
-
-   
-    width: 50vw;
-   
-    
+}
+#Processing{
+    position:  absolute;
+    top : 0px;
+    left : 0px;
+    height : 100%;
+    width: 100% ;
+    font-size: xx-large;
 }

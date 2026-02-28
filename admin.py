@@ -191,6 +191,16 @@ def add_employees():
       if request.method == GET:
          return render_template("admin/add_employees.html")
       elif request.method == POST:
+         form_pack = request.form
+         form_files = request.files
+         if form_pack.get("request_type")=="GenerateOtp":
+            session["employee_email"] =  form_pack.get("email")
+            EmployeeEmail =  form_pack.get("email")
+            session["employee_name"] = form_pack.get("name")
+            EmployeeName = form_pack.get("name")
+            session["server_otp"]= GenerateOTP(EmployeeEmail,EmployeeName) 
+            return jsonify(status=OK,message="Email Sent")
+            
          if request.files["file"]:
             print(float(request.files["file"].content_length))
             file = request.files["file"]
