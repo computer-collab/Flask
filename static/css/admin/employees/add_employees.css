@@ -55,17 +55,21 @@ body *{
 }
 #PreviewForeground{
 
-   
+    
     display: flex;
     background-color: antiquewhite;
     overflow-x: scroll;
-    width: 50vw;
-    max-width: 200px;
+    
+    /* max-height: 70vh; */
+    
     
     
 }
 #ProfilePic{
-    background-color: #cb17d1;
+    background-color: none;
+    /* max-height: 80vh; */
+    
+    object-fit: contain; 
 }
 #Processing{
     position:  absolute;

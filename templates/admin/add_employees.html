@@ -26,9 +26,11 @@
 <body>
     <h1>Add Employees</h1>
     <form action="/add_employees" enctype="multipart/form-data" method="post">
+        <div style="display: inline-flex;"><div style="display: inline-block;">
         <label for="ProfilePic">Profile Picture : </label>
-       
-        <button id="ProfilePic" type="button" >Choose Picture </button><br>
+        <button id="ProfilePic" type="button" >Choose Picture </button><br></div>
+        <img id="PreviewPicture" alt="Profile Pic" >
+    </div>
         <span id="FileName"></span> <button id="PreviewPicButton" type="button">Preview Image</button>
         
         <br>
