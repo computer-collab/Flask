@@ -6,9 +6,12 @@ const NameBox = document.getElementById("NameBox");
 const EmailBox = document.getElementById("EmailBox");
 const WorkerTypeBox = document.getElementById("WorkerType");
 const FORM = document.querySelector("form");
+const Processing = document.getElementById("Processing")
+const GenerateOtpButton = document.getElementById("GenerateOtpButton");
+
 const ProfilePicInput = document.getElementById("ProfilePicInput");
 const ProfilePic = document.getElementById("ProfilePic");
-
+const ProfilePicture = document.getElementById("ProfilePicture")
 const Preview = document.getElementById("Preview");
 
 const PreviewForeground = document.getElementById("PreviewForeground");
@@ -29,7 +32,10 @@ ProfilePicInput.addEventListener("change",(x)=>{
     const reader = new FileReader();
     reader.onload =  (ed)=>{
         Preview.src = ed.target.result;
+        ProfilePicture.src = ed.target.result
+        
     }
+    ProfilePicture.hidden=false
     reader.readAsDataURL (StoredPhoto)
 })
 
@@ -47,7 +53,7 @@ ProfilePic.addEventListener("click", () => {
 
 PreviewButton.addEventListener('click', () => {
     if(PreviewBackground.hidden == true || PreviewBackground.style.display == "none"){
-        if (!StoredPhoto.type.startsWith("image/") || StoredPhoto==null ){
+        if ( StoredPhoto==null ){
             alert("Empty Photo");
         }else {
              PreviewBackground.hidden = false
@@ -72,6 +78,28 @@ WorkerTypeBox.
         }else {
                 document.getElementById("OthershelperDiv").hidden = true
             }})
+
+
+GenerateOtpButton.addEventListener("click",button=>{
+    if ( EmailBox.value === "" || NameBox.value ===""){
+        document.getElementById("OTPMailBox").innerHTML = "Credentials cannot be empty"
+    }
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 document.getElementById("submitbutton").addEventListener("click",Submit=>{

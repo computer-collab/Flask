@@ -26,18 +26,28 @@
 <body>
     <h1>Add Employees</h1>
     <form action="/add_employees" enctype="multipart/form-data" method="post">
-        <div style="display: inline-flex;"><div style="display: inline-block;">
+
+        <!-- For profile mini view and select -->
+        <div style="display: inline-flex;">
+            <div style="display: inline-block;">
         <label for="ProfilePic">Profile Picture : </label>
-        <button id="ProfilePic" type="button" >Choose Picture </button><br></div>
-        <img id="PreviewPicture" alt="Profile Pic" >
+        <button id="ProfilePic" type="button" >Choose Picture </button>
+        <br>
+        <button id="PreviewPicButton" type="button">Preview Image</button>
     </div>
-        <span id="FileName"></span> <button id="PreviewPicButton" type="button">Preview Image</button>
+        <img id="ProfilePicture" alt="Profile Pic" hidden style="height: 70px" >
+    </div>
+        
         
         <br>
+        <div >
         <label for="NameBox">Name:</label>
         <input type="text" id="NameBox" required name="NameBox"><br><br>
         <label for="EmailBox">Email:</label>
         <input type="text" id="EmailBox" required name="EmailBox"><br><br>
+        <button id="GenerateOtpButton" type="button">GenerateOtp</button>
+        <span id="OTPMailBox" ></span>
+        </div>
         <label for="WorkerTypeBox">Worker Type:</label>
         <input type="text"  id="WorkerTypeBox" name="WorkerTypeBox"     required><br><br>
 
